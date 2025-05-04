@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/books/books_parts.dart';
 import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/lelts_course/handouts/upload_handouts.dart';
+import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/oxford_course/handouts/edit_handouts.dart';
 import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/oxford_course/handouts/upload_handouts.dart';
 import 'package:e_learning_dathboard/admin_screens/open_pdf/open_pdf.dart';
 import 'package:e_learning_dathboard/business_logic/app_cubit/app_cubit.dart';
@@ -78,7 +79,7 @@ class _OxfordHandoutsScreenState extends State<OxfordHandoutsScreen> {
               children: [
                 SizedBox(height: MediaQuery.of(context).size.height*0.01,),
 
-                state is GetOxfordCoursesLoadingState?
+                state is GetOxfordCoursesLoadingState || state is DeleteOxfordCoursesLoadingState?
                 const Center(child: CircularProgressIndicator(),):
                 Expanded(
                   child: ListView.separated(
@@ -95,55 +96,92 @@ class _OxfordHandoutsScreenState extends State<OxfordHandoutsScreen> {
                             borderRadius: BorderRadius.circular(MediaQuery.of(context).size.height*0.022),
                             color: ColorManager.primary,
                           ),
-                          height: MediaQuery.of(context).size.height*0.15,
-
-
+                          height: MediaQuery.of(context).size.height*0.2,
                           child:Padding(
                             padding: EdgeInsets.all(MediaQuery.of(context).size.height*0.01),
-                            child: Row(
-                                children: [
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Row(
+                                    children: [
 
-                                  /// image
-                                  Container(
-                                    margin: EdgeInsets.symmetric(
-                                      horizontal: MediaQuery.of(context).size.height*.01,
-                                    ),
-                                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                                    height: MediaQuery.of(context).size.height*0.1,
-                                    width: MediaQuery.of(context).size.height*.1,
-                                    decoration: BoxDecoration(
-                                      color: ColorManager.white.withOpacity(.9),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: CachedNetworkImage(
-                                      fit: BoxFit.cover,
-                                      imageUrl: 'https://img.freepik.com/free-photo/english-books-with-red-background_23-2149440458.jpg?w=360&t=st=1703150045~exp=1703150645~hmac=38549c832725cef0920fc52fc2a15442b0f41c825fb24c92f7c44122af614ddd',
-                                      progressIndicatorBuilder:  (context, url,downloadProgress) {
-                                        return const Center(child: CircularProgressIndicator(),);
-                                      },
-                                      errorWidget: (context, url, error) {
-                                        return const Image(image: AssetImage('assets/images/bookshelf.png'));
-                                      },
-                                    ),
-                                  ),
-
-
-                                  /// sized box
-                                  SizedBox(width: MediaQuery.of(context).size.height*0.02,),
-
-
-                                  /// text
-                                  Expanded(
-                                    child: Text(
-                                      cubit.oxfordCoursesList[index].title,
-                                      style: TextStyle(
-                                          fontSize: MediaQuery.of(context).size.height*0.022,
-                                          color: ColorManager.white
+                                      /// image
+                                      Container(
+                                        margin: EdgeInsets.symmetric(
+                                          horizontal: MediaQuery.of(context).size.height*.01,
+                                        ),
+                                        clipBehavior: Clip.antiAliasWithSaveLayer,
+                                        height: MediaQuery.of(context).size.height*0.1,
+                                        width: MediaQuery.of(context).size.height*.1,
+                                        decoration: BoxDecoration(
+                                          color: ColorManager.white.withOpacity(.9),
+                                          borderRadius: BorderRadius.circular(10),
+                                        ),
+                                        child: CachedNetworkImage(
+                                          fit: BoxFit.cover,
+                                          imageUrl: 'https://img.freepik.com/free-photo/english-books-with-red-background_23-2149440458.jpg?w=360&t=st=1703150045~exp=1703150645~hmac=38549c832725cef0920fc52fc2a15442b0f41c825fb24c92f7c44122af614ddd',
+                                          progressIndicatorBuilder:  (context, url,downloadProgress) {
+                                            return const Center(child: CircularProgressIndicator(),);
+                                          },
+                                          errorWidget: (context, url, error) {
+                                            return const Image(image: AssetImage('assets/images/bookshelf.png'));
+                                          },
+                                        ),
                                       ),
-                                      maxLines: 2,
+
+
+                                      /// sized box
+                                      SizedBox(width: MediaQuery.of(context).size.height*0.02,),
+
+
+                                      /// text
+                                      Expanded(
+                                        child: Text(
+                                          cubit.oxfordCoursesList[index].title,
+                                          style: TextStyle(
+                                              fontSize: MediaQuery.of(context).size.height*0.022,
+                                              color: ColorManager.white
+                                          ),
+                                          maxLines: 2,
+                                        ),
+                                      )
+                                    ]
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                     IconButton(
+                                         onPressed: (){
+                                           cubit.deleteOxfordCourses(
+                                               section: 'books',
+                                               uId: cubit.oxfordCoursesList[index].uId,
+                                           );
+                                         },
+                                         icon: Icon(
+                                            Icons.delete,
+                                            color: Colors.red,
+                                            size: MediaQuery.of(context).size.height*0.03,
+                                         )
+                                     ),
+                                    SizedBox(width: MediaQuery.of(context).size.height*0.005,),
+                                    IconButton(
+                                        onPressed: (){
+                                          customPushNavigator(context, EditOxfordHandouts(
+                                            uId: cubit.oxfordCoursesList[index].uId,
+                                            title: cubit.oxfordCoursesList[index].title,
+                                            url: cubit.oxfordCoursesList[index].url,
+                                            section: 'books',
+                                          ));
+                                        },
+                                        icon: Icon(
+                                          Icons.edit,
+                                          color: ColorManager.white,
+                                          size: MediaQuery.of(context).size.height*0.03,
+                                        )
                                     ),
-                                  )
-                                ]
+                                  ],
+                                )
+                              ],
                             ),
                           ) ,
                         ),

@@ -48,6 +48,54 @@ class UploadOxfordCoursesSuccessState extends AppStates {}
 class UploadOxfordCoursesLoadingState extends AppStates {}
 class UploadOxfordCoursesErrorState extends AppStates {}
 
+class UpdateOxfordSpeakingSuccessState extends AppStates {}
+class UpdateOxfordSpeakingLoadingState extends AppStates {}
+class UpdateOxfordSpeakingErrorState extends AppStates {}
+
+class DeleteOxfordSpeakingSuccessState extends AppStates {}
+class DeleteOxfordSpeakingLoadingState extends AppStates {}
+class DeleteOxfordSpeakingErrorState extends AppStates {}
+
+class UpdateIeltsSpeakingSuccessState extends AppStates {}
+class UpdateIeltsSpeakingLoadingState extends AppStates {}
+class UpdateIeltsSpeakingErrorState extends AppStates {}
+
+class DeleteIeltsSpeakingSuccessState extends AppStates {}
+class DeleteIeltsSpeakingLoadingState extends AppStates {}
+class DeleteIeltsSpeakingErrorState extends AppStates {}
+
+class UpdateCambridgetSpeakingSuccessState extends AppStates {}
+class UpdateCambridgetSpeakingLoadingState extends AppStates {}
+class UpdateCambridgetSpeakingErrorState extends AppStates {}
+
+class DeleteCambridgetSpeakingSuccessState extends AppStates {}
+class DeleteCambridgetSpeakingLoadingState extends AppStates {}
+class DeleteCambridgetSpeakingErrorState extends AppStates {}
+
+class DeleteOxfordCoursesSuccessState extends AppStates {}
+class DeleteOxfordCoursesLoadingState extends AppStates {}
+class DeleteOxfordCoursesErrorState extends AppStates {}
+
+class UpdateOxfordCoursesSuccessState extends AppStates {}
+class UpdateOxfordCoursesLoadingState extends AppStates {}
+class UpdateOxfordCoursesErrorState extends AppStates {}
+
+class DeleteIeltsCoursesSuccessState extends AppStates {}
+class DeleteIeltsCoursesLoadingState extends AppStates {}
+class DeleteIeltsCoursesErrorState extends AppStates {}
+
+class UpdateIeltsCoursesSuccessState extends AppStates {}
+class UpdateIeltsCoursesLoadingState extends AppStates {}
+class UpdateIeltsCoursesErrorState extends AppStates {}
+
+class DeleteCambridgeCoursesSuccessState extends AppStates {}
+class DeleteCambridgeCoursesLoadingState extends AppStates {}
+class DeleteCambridgeCoursesErrorState extends AppStates {}
+
+class UpdateCambridgeCoursesSuccessState extends AppStates {}
+class UpdateCambridgeCoursesLoadingState extends AppStates {}
+class UpdateCambridgeCoursesErrorState extends AppStates {}
+
 class GetCambridgeCoursesSuccessState extends AppStates {}
 class GetCambridgeCoursesLoadingState extends AppStates {}
 class GetCambridgeCoursesErrorState extends AppStates {}
@@ -71,6 +119,10 @@ class GetCertificateErrorState extends AppStates {}
 class UploadCertificateSuccessState extends AppStates {}
 class UploadCertificateLoadingState extends AppStates {}
 class UploadCertificateErrorState extends AppStates {}
+
+class UpdateCertificateSuccessState extends AppStates {}
+class UpdateCertificateLoadingState extends AppStates {}
+class UpdateCertificateErrorState extends AppStates {}
 
 class GetLocalCertificateSuccessState extends AppStates {}
 class GetLocalCertificateLoadingState extends AppStates {}
@@ -101,8 +153,20 @@ class UploadGroupsSuccessState extends AppStates {}
 class UploadGroupsLoadingState extends AppStates {}
 class UploadGroupsErrorState extends AppStates {}
 
+class UpdateGroupsSuccessState extends AppStates {}
+class UpdateGroupsLoadingState extends AppStates {}
+class UpdateGroupsErrorState extends AppStates {}
+
 class AddStartDateState extends AppStates {}
 class AddEndDateState extends AppStates {}
 class AddEndTimeState extends AppStates {}
 class AddStartTimeState extends AppStates {}
 class SwitchStatusState extends AppStates {}
+
+class UpdateFreeNotesSuccessState extends AppStates {}
+class UpdateFreeNotesLoadingState extends AppStates {}
+class UpdateFreeNotesErrorState extends AppStates {}
+
+class DeleteFreeNotesSuccessState extends AppStates {}
+class DeleteFreeNotesLoadingState extends AppStates {}
+class DeleteFreeNotesErrorState extends AppStates {}

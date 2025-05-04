@@ -1,4 +1,5 @@
 
+import 'package:e_learning_dathboard/admin_screens/free_note_screen/view/edit_material.dart';
 import 'package:e_learning_dathboard/admin_screens/free_note_screen/view/upload_pdf.dart';
 import 'package:e_learning_dathboard/admin_screens/open_pdf/open_pdf.dart';
 import 'package:e_learning_dathboard/business_logic/app_cubit/app_cubit.dart';
@@ -8,6 +9,7 @@ import 'package:e_learning_dathboard/widgets/navigate_to.dart';
 import 'package:e_learning_dathboard/widgets/navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 class MaterialScreen extends StatelessWidget {
   final String title;
@@ -34,66 +36,115 @@ class MaterialScreen extends StatelessWidget {
               body: BlocBuilder<AppCubit,AppStates>(
                 builder:  (context,state){
                   var cubit=AppCubit.get(context);
-                  return Container(
-                      color: ColorManager.white,
-                      child: Column(
-                        children: [
-                          Expanded(
-                            child: GridView.count(
-                              crossAxisCount: 2,
-                              childAspectRatio: 1/.7,
-                              children: List.generate(cubit.freeNotesList.length,(index) =>
-                                  GestureDetector(
-                                onTap: (){
-                                  navigateTo(context,  OpenPdf(
-                                      title: cubit.freeNotesList[index].title,
-                                      pdfUrl: cubit.freeNotesList[index].url,
-                                  ));
+                  return ModalProgressHUD(
+                      inAsyncCall: state is DeleteFreeNotesLoadingState || state is GetFreeNotesLoadingState,
+                      child: cubit.freeNotesList.isEmpty?
+                      Center(
+                        child: Text(
+                          'No $title available',
+                          style: TextStyle(
+                              color: ColorManager.black,
+                              fontSize: MediaQuery.of(context).size.height*0.025
+                          ),
+                        ),
+                      ):
+                      Container(
+                          color: ColorManager.white,
+                          child: Column(
+                            children: [
+                              Expanded(
+                                child: GridView.count(
+                                  crossAxisCount: 2,
+                                  childAspectRatio: 1/.9,
+                                  children: List.generate(cubit.freeNotesList.length,(index) =>
+                                      GestureDetector(
+                                        onTap: (){
+                                          navigateTo(context, OpenPdf(
+                                            title: cubit.freeNotesList[index].title,
+                                            pdfUrl: cubit.freeNotesList[index].url,
+                                          ));
 
-                                },
-                                child: Container(
-                                  padding:  EdgeInsets.symmetric(
-                                    horizontal: MediaQuery.of(context).size.height*0.02
-                                  ) ,
-                                  margin: EdgeInsets.symmetric(
-                                      horizontal: MediaQuery.of(context).size.height*0.015,
-                                      vertical: MediaQuery.of(context).size.height*0.01
-                                  ),
-                                  decoration: BoxDecoration(
-                                      color: ColorManager.primary,
-                                      borderRadius: BorderRadius.circular(
-                                          MediaQuery.of(context).size.height*0.02
-                                      )
-                                  ),
-                                  child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
+                                        },
+                                        child: Container(
+                                          padding:  EdgeInsets.symmetric(
+                                              horizontal: MediaQuery.of(context).size.height*0.02
+                                          ) ,
+                                          margin: EdgeInsets.symmetric(
+                                              horizontal: MediaQuery.of(context).size.height*0.015,
+                                              vertical: MediaQuery.of(context).size.height*0.01
+                                          ),
+                                          decoration: BoxDecoration(
+                                              color: ColorManager.primary,
+                                              borderRadius: BorderRadius.circular(
+                                                  MediaQuery.of(context).size.height*0.02
+                                              )
+                                          ),
+                                          child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              children: [
 
-                                        Image(
-                                          height: MediaQuery.of(context).size.height*0.06,
-                                          width: MediaQuery.sizeOf(context).height*0.06,
-                                          image:  AssetImage(image),
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    IconButton(
+                                                        onPressed: (){
+                                                          AppCubit.get(context).deletePdf(
+                                                              section: section,
+                                                              uId: cubit.freeNotesList[index].uId.toString()
+                                                          );
+                                                        },
+                                                        icon: Icon(
+                                                          Icons.delete,
+                                                          color: ColorManager.red,
+                                                        )
+                                                    ),
+                                                    IconButton(
+                                                        onPressed: (){
+                                                          customPushNavigator(context, EditMaterial(
+                                                            section: section,
+                                                            url: cubit.freeNotesList[index].url,
+                                                            uId: cubit.freeNotesList[index].uId,
+                                                            title: cubit.freeNotesList[index].title,
+                                                          ));
+                                                          // AppCubit.get(context).deleteFreeNotes(
+                                                          //     section: section,
+                                                          //     uId: cubit.freeNotesList[index].uId.toString()
+                                                          // );
+                                                        },
+                                                        icon: Icon(
+                                                          Icons.edit,
+                                                          color: ColorManager.white,
+                                                        )
+                                                    ),
+                                                  ],
+                                                ),
+
+                                                Image(
+                                                  height: MediaQuery.of(context).size.height*0.06,
+                                                  width: MediaQuery.sizeOf(context).height*0.06,
+                                                  image:  AssetImage(image),
+                                                ),
+
+                                                SizedBox(height: MediaQuery.of(context).size.height*0.02,),
+
+                                                Text(
+                                                  cubit.freeNotesList[index].title,style: TextStyle(
+                                                    color: ColorManager.white,
+                                                    fontSize: MediaQuery.of(context).size.height*0.022,
+                                                    fontWeight: FontWeight.w300
+                                                ),
+                                                  overflow: TextOverflow.ellipsis,
+                                                )
+                                              ]
+                                          ),
                                         ),
-
-                                        SizedBox(height: MediaQuery.of(context).size.height*0.02,),
-
-                                        Text(
-                                          cubit.freeNotesList[index].title,style: TextStyle(
-                                            color: ColorManager.white,
-                                            fontSize: MediaQuery.of(context).size.height*0.022,
-                                            fontWeight: FontWeight.w300
-                                        ),
-                                          overflow: TextOverflow.ellipsis,
-                                        )
-                                      ]
+                                      ),
                                   ),
                                 ),
-                              ),
-                              ),
-                            ),
+                              )
+                            ],
                           )
-                        ],
                       )
                   );
                 }

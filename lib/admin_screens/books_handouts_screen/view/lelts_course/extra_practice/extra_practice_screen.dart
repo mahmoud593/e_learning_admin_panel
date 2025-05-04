@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/books/books_parts.dart';
+import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/lelts_course/handouts/edit_ilets_handouts.dart';
 import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/lelts_course/handouts/upload_handouts.dart';
 import 'package:e_learning_dathboard/admin_screens/open_pdf/open_pdf.dart';
 import 'package:e_learning_dathboard/business_logic/app_cubit/app_cubit.dart';
@@ -94,55 +95,94 @@ class _IeltsHandoutsScreenState extends State<ExtraPracticeScreen> {
                             borderRadius: BorderRadius.circular(MediaQuery.of(context).size.height*0.022),
                             color: ColorManager.primary,
                           ),
-                          height: MediaQuery.of(context).size.height*0.15,
+                          height: MediaQuery.of(context).size.height*0.2,
 
 
                           child:Padding(
                             padding: EdgeInsets.all(MediaQuery.of(context).size.height*0.01),
-                            child: Row(
-                                children: [
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Row(
+                                    children: [
 
-                                  /// image
-                                  Container(
-                                    margin: EdgeInsets.symmetric(
-                                      horizontal: MediaQuery.of(context).size.height*.01,
-                                    ),
-                                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                                    height: MediaQuery.of(context).size.height*0.1,
-                                    width: MediaQuery.of(context).size.height*.1,
-                                    decoration: BoxDecoration(
-                                      color: ColorManager.white.withOpacity(.9),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: CachedNetworkImage(
-                                      fit: BoxFit.cover,
-                                      imageUrl: 'https://img.freepik.com/free-vector/research-paper-concept-illustration_114360-8142.jpg?t=st=1736590222~exp=1736593822~hmac=2976e862bb09d473eca68957436ad70d51604a043c8080d209a4fb79e692a8f2&w=740',
-                                      progressIndicatorBuilder:  (context, url,downloadProgress) {
-                                        return const Center(child: CircularProgressIndicator(),);
-                                      },
-                                      errorWidget: (context, url, error) {
-                                        return const Image(image: AssetImage('assets/images/bookshelf.png'));
-                                      },
-                                    ),
-                                  ),
-
-
-                                  /// sized box
-                                  SizedBox(width: MediaQuery.of(context).size.height*0.02,),
-
-
-                                  /// text
-                                  Expanded(
-                                    child: Text(
-                                      cubit.ieltsCoursesList[index].title,
-                                      style: TextStyle(
-                                          fontSize: MediaQuery.of(context).size.height*0.022,
-                                          color: ColorManager.white
+                                      /// image
+                                      Container(
+                                        margin: EdgeInsets.symmetric(
+                                          horizontal: MediaQuery.of(context).size.height*.01,
+                                        ),
+                                        clipBehavior: Clip.antiAliasWithSaveLayer,
+                                        height: MediaQuery.of(context).size.height*0.1,
+                                        width: MediaQuery.of(context).size.height*.1,
+                                        decoration: BoxDecoration(
+                                          color: ColorManager.white.withOpacity(.9),
+                                          borderRadius: BorderRadius.circular(10),
+                                        ),
+                                        child: CachedNetworkImage(
+                                          fit: BoxFit.cover,
+                                          imageUrl: 'https://img.freepik.com/free-vector/research-paper-concept-illustration_114360-8142.jpg?t=st=1736590222~exp=1736593822~hmac=2976e862bb09d473eca68957436ad70d51604a043c8080d209a4fb79e692a8f2&w=740',
+                                          progressIndicatorBuilder:  (context, url,downloadProgress) {
+                                            return const Center(child: CircularProgressIndicator(),);
+                                          },
+                                          errorWidget: (context, url, error) {
+                                            return const Image(image: AssetImage('assets/images/bookshelf.png'));
+                                          },
+                                        ),
                                       ),
-                                      maxLines: 2,
+
+
+                                      /// sized box
+                                      SizedBox(width: MediaQuery.of(context).size.height*0.02,),
+
+
+                                      /// text
+                                      Expanded(
+                                        child: Text(
+                                          cubit.ieltsCoursesList[index].title,
+                                          style: TextStyle(
+                                              fontSize: MediaQuery.of(context).size.height*0.022,
+                                              color: ColorManager.white
+                                          ),
+                                          maxLines: 2,
+                                        ),
+                                      )
+                                    ]
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    IconButton(
+                                        onPressed: (){
+                                          cubit.deleteIeltsCourses(
+                                            section: 'extraPractice',
+                                            uId: cubit.ieltsCoursesList[index].uId,
+                                          );
+                                        },
+                                        icon: Icon(
+                                          Icons.delete,
+                                          color: Colors.red,
+                                          size: MediaQuery.of(context).size.height*0.03,
+                                        )
                                     ),
-                                  )
-                                ]
+                                    SizedBox(width: MediaQuery.of(context).size.height*0.005,),
+                                    IconButton(
+                                        onPressed: (){
+                                          customPushNavigator(context, EditIletsHandouts(
+                                            uId: cubit.ieltsCoursesList[index].uId,
+                                            title: cubit.ieltsCoursesList[index].title,
+                                            url: cubit.ieltsCoursesList[index].url,
+                                            section: 'extraPractice',
+                                          ));
+                                        },
+                                        icon: Icon(
+                                          Icons.edit,
+                                          color: ColorManager.white,
+                                          size: MediaQuery.of(context).size.height*0.03,
+                                        )
+                                    ),
+                                  ],
+                                )
+                              ],
                             ),
                           ) ,
                         ),

@@ -1,5 +1,7 @@
+import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/lelts_course/speaking/ielts_speaking_tabs/edit_ielts_speaking.dart';
 import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/lelts_course/speaking/ielts_speaking_tabs/pdf/upload_ielts_speacking.dart';
 import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/lelts_course/tracks/upload_tracks.dart';
+import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/oxford_course/speaking/edit_oxford_speacking.dart';
 import 'package:e_learning_dathboard/business_logic/app_cubit/app_cubit.dart';
 import 'package:e_learning_dathboard/business_logic/app_cubit/app_states.dart';
 import 'package:e_learning_dathboard/styles/color_manager.dart';
@@ -134,6 +136,42 @@ class _TracksScreenState extends State<IeltsAudioScreen> {
                                         ),
                                       ),
                                     ),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      IconButton(
+                                          onPressed: (){
+                                            cubit.deleteIeltsSpeakingCourses(
+                                              section: 'audio',
+                                              filed: 'speaking',
+                                              uId: cubit.ieltsCoursesList[index].uId,
+                                            );
+                                          },
+                                          icon: Icon(
+                                            Icons.delete,
+                                            color: Colors.red,
+                                            size: MediaQuery.of(context).size.height*0.03,
+                                          )
+                                      ),
+                                      SizedBox(width: MediaQuery.of(context).size.height*0.005,),
+                                      IconButton(
+                                          onPressed: (){
+                                            customPushNavigator(context, EditIeltsSpeacking(
+                                              uId: cubit.ieltsCoursesList[index].uId,
+                                              index: 0,
+                                              title: cubit.ieltsCoursesList[index].title,
+                                              url: cubit.ieltsCoursesList[index].url,
+                                              section: 'audio',
+                                            ));
+                                          },
+                                          icon: Icon(
+                                            Icons.edit,
+                                            color: ColorManager.primary,
+                                            size: MediaQuery.of(context).size.height*0.03,
+                                          )
+                                      ),
+                                    ],
                                   ),
                                 ]),
                           );

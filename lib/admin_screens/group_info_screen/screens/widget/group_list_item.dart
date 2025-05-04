@@ -1,7 +1,9 @@
+import 'package:e_learning_dathboard/admin_screens/group_info_screen/screens/edit_group_info.dart';
 import 'package:e_learning_dathboard/business_logic/app_cubit/app_cubit.dart';
 import 'package:e_learning_dathboard/data/models/group_model.dart';
 import 'package:e_learning_dathboard/data/models/payment_model.dart';
 import 'package:e_learning_dathboard/styles/color_manager.dart';
+import 'package:e_learning_dathboard/widgets/navigation.dart';
 import 'package:e_learning_dathboard/widgets/text_manager.dart';
 import 'package:flutter/material.dart';
 
@@ -33,20 +35,47 @@ class GroupListItem extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
 
-              Align(
-                alignment: Alignment.topRight,
-                child: CircleAvatar(
-                  backgroundColor: Colors.white,
-                  child: IconButton(
-                      onPressed: (){
-                        AppCubit.get(context).deleteGroups(
-                            courseName: section,
-                            uId: groupModel.uId.toString()
-                        );
-                      },
-                      icon: Icon(Icons.delete,color: ColorManager.red,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: CircleAvatar(
+                      backgroundColor: Colors.white,
+                      child: IconButton(
+                        onPressed: (){
+                          AppCubit.get(context).deleteGroups(
+                              courseName: section,
+                              uId: groupModel.uId.toString()
+                          );
+                        },
+                        icon: Icon(Icons.delete,color: ColorManager.red,),
+                      ),
+                    ),
                   ),
-                ),
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: CircleAvatar(
+                      backgroundColor: Colors.white,
+                      child: IconButton(
+                        onPressed: (){
+                          customPushNavigator(context, EditGroupInfo(
+                            section: section,
+                            uId: groupModel.uId.toString(),
+                            courseName: groupModel.courseName.toString(),
+                            startDate: groupModel.startDate.toString(),
+                            endDate: groupModel.endDate.toString(),
+                            startTime: groupModel.startTime.toString(),
+                            endTime: groupModel.endTime.toString(),
+                            count: groupModel.count.toString(),
+                            status: groupModel.status,
+                          ));
+                        },
+                        icon: Icon(Icons.edit,color: ColorManager.primary,),
+                      ),
+                    ),
+                  ),
+                ],
               ),
 
               SizedBox(height: MediaQuery.of(context).size.height*.02,),

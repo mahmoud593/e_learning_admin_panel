@@ -51,6 +51,12 @@ class _PaymentRequestsScreenState extends State<PaymentRequestsScreen> {
           var cubit=AppCubit.get(context);
           return state is GetPaymentsImagesLoadingState?
           Center(child: CupertinoActivityIndicator(),) :
+          cubit.paymentsImage.isEmpty?
+          Center(child: Text('No Payment Requests',style: TextStyle(
+            fontSize: MediaQuery.sizeOf(context).height*0.02,
+            fontWeight: FontWeight.bold,
+            color: ColorManager.black,
+          ),),) :
           Column(
             children: [
               Expanded(

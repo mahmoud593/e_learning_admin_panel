@@ -1,3 +1,5 @@
+import 'package:e_learning_dathboard/admin_screens/certificates/screens/edit_certificate_screen.dart';
+import 'package:e_learning_dathboard/admin_screens/certificates/screens/open_image.dart';
 import 'package:e_learning_dathboard/admin_screens/certificates/screens/upload_certificate_screen.dart';
 import 'package:e_learning_dathboard/business_logic/app_cubit/app_cubit.dart';
 import 'package:e_learning_dathboard/business_logic/app_cubit/app_states.dart';
@@ -45,48 +47,83 @@ class _ManageCertificateScreenState extends State<ManageCertificateScreen> {
                     childAspectRatio: 1/1.2,
                     crossAxisCount: 2,
                     children: List.generate(cubit.certificates.length, (index) {
-                      return Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12) ,
-                          border: Border.all(
-                            color: Colors.black,
-                            width: 1
+                      return GestureDetector(
+                        onTap: (){
+                          customPushNavigator(context, FullScreenImageScreen(
+                            imageUrl: cubit.certificates[index].certificateImage,
+                          ));
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12) ,
+                            border: Border.all(
+                              color: Colors.black,
+                              width: 1
+                            ),
+                            image: DecorationImage(
+                               fit: BoxFit.cover,
+                              image: NetworkImage(cubit.certificates[index].certificateImage),
+                            ),
                           ),
-                          image: DecorationImage(
-                             fit: BoxFit.cover,
-                            image: NetworkImage(cubit.certificates[index].certificateImage),
-                          ),
-                        ),
-                        child: Column(
-                          crossAxisAlignment:  CrossAxisAlignment.start,
-                          children: [
-                            Align(
-                              alignment: Alignment.topRight,
-                              child: IconButton(
-                                  onPressed: (){
-                                    cubit.deleteCertificates(uId: cubit.certificates[index].uId);
-                                  },
-                                  icon: Icon(Icons.delete,color: ColorManager.red,)
+                          child: Column(
+                            crossAxisAlignment:  CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Align(
+                                    alignment: Alignment.topRight,
+                                    child: CircleAvatar(
+                                      radius: 20,
+                                      backgroundColor: Colors.white,
+                                      child: IconButton(
+                                          onPressed: (){
+                                            cubit.deleteCertificates(uId: cubit.certificates[index].uId);
+                                          },
+                                          icon: Icon(Icons.delete,color: ColorManager.red,)
+                                      ),
+                                    ),
+                                  ),
+                                  Align(
+                                    alignment: Alignment.topRight,
+                                    child: CircleAvatar(
+                                      radius: 20,
+                                      backgroundColor: Colors.white,
+                                      child: IconButton(
+                                          onPressed: (){
+                                            cubit.uploadedCertificateImage = null;
+                                            customPushNavigator(context, EditCertificateScreen(
+                                              title: cubit.certificates[index].certificateName,
+                                              image: cubit.certificates[index].certificateImage,
+                                              uId: cubit.certificates[index].uId,
+                                              link: cubit.certificates[index].certificateLink,
+                                            ));
+                                          },
+                                          icon: Icon(Icons.edit,color: ColorManager.primary,)
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                            Spacer(),
-                            Container(
-                              decoration:BoxDecoration(
-                                color: ColorManager.primary,
-                                borderRadius: BorderRadius.only(
-                                  bottomRight: Radius.circular(11),
-                                  bottomLeft: Radius.circular(11),
+                              Spacer(),
+                              Container(
+                                decoration:BoxDecoration(
+                                  color: ColorManager.primary,
+                                  borderRadius: BorderRadius.only(
+                                    bottomRight: Radius.circular(11),
+                                    bottomLeft: Radius.circular(11),
+                                  ) ,
                                 ) ,
-                              ) ,
-                              padding: EdgeInsets.all(12) ,
-                              child: Text(cubit.certificates[index].certificateName,
-                                style:TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: MediaQuery.sizeOf(context).height*0.014
-                              ),),
-                            ),
-                          ],
+                                padding: EdgeInsets.all(12) ,
+                                child: Text(cubit.certificates[index].certificateName,
+                                  style:TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: MediaQuery.sizeOf(context).height*0.014
+                                ),),
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     })

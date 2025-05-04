@@ -1,4 +1,6 @@
 import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/lelts_course/tracks/upload_tracks.dart';
+import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/oxford_course/handouts/edit_handouts.dart';
+import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/oxford_course/tracks/edit_track.dart';
 import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/oxford_course/tracks/oxford_upload_tracks.dart';
 import 'package:e_learning_dathboard/business_logic/app_cubit/app_cubit.dart';
 import 'package:e_learning_dathboard/business_logic/app_cubit/app_states.dart';
@@ -142,6 +144,40 @@ class _TracksScreenState extends State<OxfordTracksScreen> {
                                       ),
                                     ),
                                   ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      IconButton(
+                                          onPressed: (){
+                                            cubit.deleteOxfordCourses(
+                                              section: 'tracks',
+                                              uId: cubit.oxfordCoursesList[index].uId,
+                                            );
+                                          },
+                                          icon: Icon(
+                                            Icons.delete,
+                                            color: Colors.red,
+                                            size: MediaQuery.of(context).size.height*0.03,
+                                          )
+                                      ),
+                                      SizedBox(width: MediaQuery.of(context).size.height*0.005,),
+                                      IconButton(
+                                          onPressed: (){
+                                            customPushNavigator(context, EditOxfordTrack(
+                                              uId: cubit.oxfordCoursesList[index].uId,
+                                              title: cubit.oxfordCoursesList[index].title,
+                                              url: cubit.oxfordCoursesList[index].url,
+                                              section: 'tracks',
+                                            ));
+                                          },
+                                          icon: Icon(
+                                            Icons.edit,
+                                            color: ColorManager.primary,
+                                            size: MediaQuery.of(context).size.height*0.03,
+                                          )
+                                      ),
+                                    ],
+                                  )
                                 ]),
                           );
                         },

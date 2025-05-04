@@ -201,7 +201,117 @@ class AppCubit extends Cubit<AppStates> {
     }
 
 
-    Future<void> getPdf({
+  /// update pdf and get PDF Free Notes
+  Future updatePdf({
+    required String title,
+    int index=0,
+    required String section,
+    required String uId,
+  })async{
+    isUpload=true;
+    emit(UpdateFreeNotesLoadingState());
+    print('start upload');
+    FilePickerResult? result=await FilePicker.platform.pickFiles();
+    try{
+      File pick= File(result!.files.single.path.toString());
+      var file =pick.readAsBytesSync();
+      isUpload=false;
+      String name =DateTime.now().millisecondsSinceEpoch.toString();
+
+      // upload to firebase
+      var pdfFile =  FirebaseStorage.instance.ref().child('test')
+          .child('Section')
+          .child('Pdf')
+          .child(title)
+          .child('$name.pdf');
+
+      UploadTask task= pdfFile.putData(file);
+      TaskSnapshot snapshot=await task;
+      url = await snapshot.ref.getDownloadURL();
+
+
+      await FirebaseFirestore.instance.collection('freeNotes').doc(section).collection('Pdf')
+      .doc(uId).update({
+        'title':title,
+        'url':url,
+        'uId':uId
+      }).then((value) {
+        print('Update Success');
+
+        getAllFreeNotes(section: section);
+        isUpload=true;
+        emit(UpdateFreeNotesSuccessState());
+      }).catchError((error){
+        debugPrint('Error in update pdf is ${error.toString()}');
+        isUpload=true;
+        emit(UpdateFreeNotesErrorState());
+      });
+    }catch(e){
+      emit(UpdateFreeNotesErrorState());
+    }
+  }
+
+  Future updatePdfWithoutUrl({
+    required String title,
+    int index=0,
+    required String section,
+    required String uId,
+    required String url,
+  })async{
+    isUpload=true;
+    emit(UpdateFreeNotesLoadingState());
+    try{
+
+      await FirebaseFirestore.instance.collection('freeNotes').doc(section).collection('Pdf')
+          .doc(uId).update({
+        'title':title,
+        'url':url,
+        'uId':uId
+      }).then((value) {
+        print('Update Success');
+
+        getAllFreeNotes(section: section);
+        isUpload=true;
+        emit(UpdateFreeNotesSuccessState());
+      }).catchError((error){
+        debugPrint('Error in update pdf is ${error.toString()}');
+        isUpload=true;
+        emit(UpdateFreeNotesErrorState());
+      });
+    }catch(e){
+      emit(UpdateFreeNotesErrorState());
+    }
+  }
+
+  Future deletePdf({
+    int index=0,
+    required String section,
+    required String uId,
+  })async{
+    isUpload=true;
+    emit(DeleteFreeNotesLoadingState());
+    try{
+
+      await FirebaseFirestore.instance.collection('freeNotes').doc(section).collection('Pdf')
+          .doc(uId).delete().then((value) {
+        print('Delete Success');
+
+        getAllFreeNotes(section: section);
+        isUpload=true;
+        emit(DeleteFreeNotesSuccessState());
+      }).catchError((error){
+        debugPrint('Error in delete pdf is ${error.toString()}');
+        isUpload=true;
+        emit(DeleteFreeNotesErrorState());
+      });
+    }catch(e){
+      emit(DeleteFreeNotesErrorState());
+    }
+  }
+
+
+
+  Future<void> getPdf({
      required String section,
     })async{
 
@@ -279,17 +389,7 @@ class AppCubit extends Cubit<AppStates> {
 
   }
 
-  // PDFDocument ?doc ;
-  //
-  // Future<void> preperPdfDocument({
-  //  required String url,
-  // })async{
-  //   emit(PreperPdfLoadingState());
-  // doc = await PDFDocument.fromURL(url);
-  // print(doc);
-  //
-  // emit(PreperPdfSuccessState());
-  // }
+
 
 
   /// Oxford Courses
@@ -347,6 +447,110 @@ class AppCubit extends Cubit<AppStates> {
     }
   }
 
+  /// Oxford Courses
+  Future updateOxfordCourses({
+    required String title,
+    int index=0,
+    required String section,
+    required String uId,
+  })async{
+    isUpload=true;
+    emit(UpdateOxfordCoursesLoadingState());
+    FilePickerResult? result=await FilePicker.platform.pickFiles();
+    try{
+      File pick= File(result!.files.single.path.toString());
+      var file =pick.readAsBytesSync();
+      isUpload=false;
+      String name =DateTime.now().millisecondsSinceEpoch.toString();
+
+      var pdfFile =  FirebaseStorage.instance.ref().child('courses')
+          .child('oxford')
+          .child(section)
+          .child('Pdf')
+          .child(title)
+          .child('$name.pdf');
+
+      UploadTask task= pdfFile.putData(file);
+      TaskSnapshot snapshot=await task;
+      url = await snapshot.ref.getDownloadURL();
+
+      MaterialModel materialModel=MaterialModel(
+          title: title,
+          url: url,
+          uId: uId
+      );
+
+      await FirebaseFirestore.instance.collection('coursesMaterial').doc('oxford').collection(section)
+          .doc(uId)
+          .update(materialModel.toMap()).then((value) {
+        getOxfordCourses(section: section);
+        isUpload=true;
+        emit(UpdateOxfordCoursesSuccessState());
+      }).catchError((error){
+        debugPrint('Error in Oxford Courses is ${error.toString()}');
+        isUpload=true;
+        emit(UpdateOxfordCoursesErrorState());
+      });
+    }catch(e){
+      emit(UpdateOxfordCoursesErrorState());
+    }
+  }
+
+  Future updateOxfordCoursesWithoutUrl({
+    required String title,
+    int index=0,
+    required String section,
+    required String uId,
+    required String url,
+  })async{
+    isUpload=true;
+    emit(UpdateOxfordCoursesLoadingState());
+    try{
+
+
+      MaterialModel materialModel=MaterialModel(
+          title: title,
+          url: url,
+          uId: uId
+      );
+
+      await FirebaseFirestore.instance.collection('coursesMaterial').doc('oxford').collection(section)
+          .doc(uId)
+          .update(materialModel.toMap()).then((value) {
+        getOxfordCourses(section: section);
+        isUpload=true;
+        emit(UpdateOxfordCoursesSuccessState());
+      }).catchError((error){
+        debugPrint('Error in Oxford Courses is ${error.toString()}');
+        isUpload=true;
+        emit(UpdateOxfordCoursesErrorState());
+      });
+    }catch(e){
+      emit(UpdateOxfordCoursesErrorState());
+    }
+  }
+
+
+
+
+
+  Future<void> deleteOxfordCourses({
+    required String section,
+    required String uId,
+  })async{
+    await FirebaseFirestore.instance.collection('coursesMaterial').doc('oxford').collection(section)
+        .doc(uId).delete().then((value) {
+      print('delete Success');
+      getOxfordCourses(section: section);
+      isUpload=true;
+      emit(DeleteOxfordCoursesSuccessState());
+    }).catchError((error){
+      debugPrint('Error in Oxford Courses is ${error.toString()}');
+      isUpload=true;
+      emit(DeleteOxfordCoursesErrorState());
+    });
+  }
+
   List<MaterialModel> oxfordCoursesList=[];
   List<int> oxfordTracksBool=List.generate(1000, (e) => 0);
 
@@ -390,6 +594,28 @@ class AppCubit extends Cubit<AppStates> {
 
   }
 
+  Future<void> deleteOxfordSpeakingCourses({
+    required String section,
+    required String filed,
+    required String uId,
+  })async{
+    oxfordCoursesList=[];
+    emit(DeleteOxfordSpeakingLoadingState());
+    await FirebaseFirestore.instance.collection('coursesMaterial')
+        .doc('oxford').collection(filed).doc(section).collection('data').doc(uId)
+        .delete().then((value) {
+
+      print('get Courses Success');
+      getOxfordSpeakingCourses(section: section,filed: filed);
+      emit(DeleteOxfordSpeakingSuccessState());
+    }).catchError((error) {
+      debugPrint('Error in Get Oxford Courses is ${error.toString()}');
+      emit(DeleteOxfordSpeakingErrorState());
+    });
+
+  }
+
+
   Future uploadOxfordSpeakingCourses({
     required String title,
     int index=0,
@@ -397,7 +623,7 @@ class AppCubit extends Cubit<AppStates> {
     required String filed,
   })async{
     isUpload=true;
-    emit(UploadOxfordCoursesLoadingState());
+    emit(UpdateOxfordSpeakingLoadingState());
     print('start upload');
     FilePickerResult? result=await FilePicker.platform.pickFiles();
     try{
@@ -436,16 +662,106 @@ class AppCubit extends Cubit<AppStates> {
         });
         getOxfordSpeakingCourses(section: section,filed:filed );
         isUpload=true;
-        emit(UploadOxfordCoursesSuccessState());
+        emit(UpdateOxfordSpeakingSuccessState());
       }).catchError((error){
         debugPrint('Error in Oxford Courses is ${error.toString()}');
         isUpload=true;
-        emit(UploadOxfordCoursesErrorState());
+        emit(UpdateOxfordSpeakingErrorState());
       });
     }catch(e){
-      emit(UploadOxfordCoursesErrorState());
+      emit(UpdateOxfordSpeakingErrorState());
     }
   }
+
+  Future updateOxfordSpeakingCourses({
+    required String title,
+    int index=0,
+    required String section,
+    required String filed,
+    required String uId,
+  })async{
+    isUpload=true;
+    emit(UpdateOxfordSpeakingLoadingState());
+    print('start upload');
+    FilePickerResult? result=await FilePicker.platform.pickFiles();
+    try{
+      File pick= File(result!.files.single.path.toString());
+      var file =pick.readAsBytesSync();
+      isUpload=false;
+      String name =DateTime.now().millisecondsSinceEpoch.toString();
+
+      // upload to firebase
+      var pdfFile =  FirebaseStorage.instance.ref().child('courses')
+          .child('oxford')
+          .child(section)
+          .child('Pdf')
+          .child(title)
+          .child('$name.pdf');
+
+      UploadTask task= pdfFile.putData(file);
+      TaskSnapshot snapshot=await task;
+      url = await snapshot.ref.getDownloadURL();
+
+      print(url);
+
+      MaterialModel materialModel=MaterialModel(
+          title: title,
+          url: url,
+          uId: uId
+      );
+
+      await FirebaseFirestore.instance.collection('coursesMaterial').doc('oxford').collection(filed)
+          .doc(section).collection('data')
+          .doc(uId).update(materialModel.toMap()).then((value) {
+
+        getOxfordSpeakingCourses(section: section,filed:filed );
+        isUpload=true;
+        emit(UpdateOxfordSpeakingSuccessState());
+      }).catchError((error){
+        debugPrint('Error in Oxford Courses is ${error.toString()}');
+        isUpload=true;
+        emit(UpdateOxfordSpeakingErrorState());
+      });
+    }catch(e){
+      emit(UpdateOxfordSpeakingErrorState());
+    }
+  }
+
+  Future updateOxfordSpeakingCoursesWithoutUrl({
+    required String title,
+    int index=0,
+    required String section,
+    required String filed,
+    required String uId,
+    required String url,
+  })async{
+    isUpload=true;
+    emit(UpdateOxfordSpeakingLoadingState());
+    try{
+
+      MaterialModel materialModel=MaterialModel(
+          title: title,
+          url: url,
+          uId: uId
+      );
+
+      await FirebaseFirestore.instance.collection('coursesMaterial').doc('oxford').collection(filed)
+          .doc(section).collection('data')
+          .doc(uId).update(materialModel.toMap()).then((value) {
+
+        getOxfordSpeakingCourses(section: section,filed:filed );
+        isUpload=true;
+        emit(UpdateOxfordSpeakingSuccessState());
+      }).catchError((error){
+        debugPrint('Error in Oxford Courses is ${error.toString()}');
+        isUpload=true;
+        emit(UpdateOxfordSpeakingErrorState());
+      });
+    }catch(e){
+      emit(UpdateOxfordSpeakingErrorState());
+    }
+  }
+
 
   /// IELTS Courses
   Future uploadIeltsCourses({
@@ -475,7 +791,6 @@ class AppCubit extends Cubit<AppStates> {
       TaskSnapshot snapshot=await task;
       url = await snapshot.ref.getDownloadURL();
 
-      print(url);
 
       MaterialModel materialModel=MaterialModel(
           title: title,
@@ -502,6 +817,118 @@ class AppCubit extends Cubit<AppStates> {
     }
   }
 
+  Future<void> deleteIeltsSpeakingCourses({
+    required String section,
+    required String filed,
+    required String uId,
+  })async{
+    oxfordCoursesList=[];
+    emit(DeleteIeltsSpeakingLoadingState());
+    await FirebaseFirestore.instance.collection('coursesMaterial')
+        .doc('ielts').collection(filed).doc(section).collection('data').doc(uId)
+        .delete().then((value) {
+
+      print('get Courses Success');
+      getIeltsSpeakingCourses(section: section);
+      emit(DeleteIeltsSpeakingSuccessState());
+    }).catchError((error) {
+      debugPrint('Error in Get Ielts Courses is ${error.toString()}');
+      emit(DeleteIeltsSpeakingErrorState());
+    });
+
+  }
+
+  Future updateIeltsSpeakingCourses({
+    required String title,
+    int index=0,
+    required String section,
+    required String filed,
+    required String uId,
+  })async{
+    isUpload=true;
+    emit(UpdateIeltsSpeakingLoadingState());
+    print('start upload');
+    FilePickerResult? result=await FilePicker.platform.pickFiles();
+    try{
+      File pick= File(result!.files.single.path.toString());
+      var file =pick.readAsBytesSync();
+      isUpload=false;
+      String name =DateTime.now().millisecondsSinceEpoch.toString();
+
+      // upload to firebase
+      var pdfFile =  FirebaseStorage.instance.ref().child('courses')
+          .child('ielts')
+          .child(section)
+          .child('Pdf')
+          .child(title)
+          .child('$name.pdf');
+
+      UploadTask task= pdfFile.putData(file);
+      TaskSnapshot snapshot=await task;
+      url = await snapshot.ref.getDownloadURL();
+
+      print(url);
+
+      MaterialModel materialModel=MaterialModel(
+          title: title,
+          url: url,
+          uId: uId
+      );
+
+      await FirebaseFirestore.instance.collection('coursesMaterial').doc('ielts').collection(filed)
+          .doc(section).collection('data')
+          .doc(uId).update(materialModel.toMap()).then((value) {
+
+        getIeltsSpeakingCourses(section: section );
+        isUpload=true;
+        emit(UpdateIeltsSpeakingSuccessState());
+      }).catchError((error){
+        debugPrint('Error in Ielts Courses is ${error.toString()}');
+        isUpload=true;
+        emit(UpdateIeltsSpeakingErrorState());
+      });
+    }catch(e){
+      emit(UpdateIeltsSpeakingErrorState());
+    }
+  }
+
+  Future updateIeltsSpeakingCoursesWithoutUrl({
+    required String title,
+    int index=0,
+    required String section,
+    required String filed,
+    required String uId,
+    required String url,
+  })async{
+    isUpload=true;
+    emit(UpdateIeltsSpeakingLoadingState());
+    try{
+
+      MaterialModel materialModel=MaterialModel(
+          title: title,
+          url: url,
+          uId: uId
+      );
+
+      await FirebaseFirestore.instance.collection('coursesMaterial').doc('ielts').collection(filed)
+          .doc(section).collection('data')
+          .doc(uId).update(materialModel.toMap()).then((value) {
+
+        getIeltsSpeakingCourses(section: section );
+        isUpload=true;
+        emit(UpdateIeltsSpeakingSuccessState());
+      }).catchError((error){
+        debugPrint('Error in Ielts Courses is ${error.toString()}');
+        isUpload=true;
+        emit(UpdateIeltsSpeakingErrorState());
+      });
+    }catch(e){
+      emit(UpdateIeltsSpeakingErrorState());
+    }
+  }
+
+
+
   List<MaterialModel> ieltsCoursesList=[];
   List<int> ieltsTracksBool=List.generate(1000, (e) => 0);
 
@@ -523,6 +950,110 @@ class AppCubit extends Cubit<AppStates> {
     });
 
   }
+
+  Future updateIeltsCourses({
+    required String title,
+    int index=0,
+    required String section,
+    required String uId,
+  })async{
+    isUpload=true;
+    emit(UpdateIeltsCoursesLoadingState());
+    FilePickerResult? result=await FilePicker.platform.pickFiles();
+    try{
+      File pick= File(result!.files.single.path.toString());
+      var file =pick.readAsBytesSync();
+      isUpload=false;
+      String name =DateTime.now().millisecondsSinceEpoch.toString();
+
+      var pdfFile =  FirebaseStorage.instance.ref().child('courses')
+          .child('ielts')
+          .child(section)
+          .child('Pdf')
+          .child(title)
+          .child('$name.pdf');
+
+      UploadTask task= pdfFile.putData(file);
+      TaskSnapshot snapshot=await task;
+      url = await snapshot.ref.getDownloadURL();
+
+      MaterialModel materialModel=MaterialModel(
+          title: title,
+          url: url,
+          uId: uId
+      );
+
+      await FirebaseFirestore.instance.collection('coursesMaterial').doc('ielts').collection(section)
+          .doc(uId)
+          .update(materialModel.toMap()).then((value) {
+        getIeltsCourses(section: section);
+        isUpload=true;
+        emit(UpdateIeltsCoursesSuccessState());
+      }).catchError((error){
+        debugPrint('Error in ielts Courses is ${error.toString()}');
+        isUpload=true;
+        emit(UpdateIeltsCoursesErrorState());
+      });
+    }catch(e){
+      emit(UpdateOxfordCoursesErrorState());
+    }
+  }
+
+  Future updateIeltsCoursesWithoutUrl({
+    required String title,
+    int index=0,
+    required String section,
+    required String uId,
+    required String url,
+  })async{
+    isUpload=true;
+    emit(UpdateIeltsCoursesLoadingState());
+    try{
+
+
+      MaterialModel materialModel=MaterialModel(
+          title: title,
+          url: url,
+          uId: uId
+      );
+
+      await FirebaseFirestore.instance.collection('coursesMaterial').doc('ielts').collection(section)
+          .doc(uId)
+          .update(materialModel.toMap()).then((value) {
+        getIeltsCourses(section: section);
+        isUpload=true;
+        emit(UpdateIeltsCoursesSuccessState());
+      }).catchError((error){
+        debugPrint('Error in ielts Courses is ${error.toString()}');
+        isUpload=true;
+        emit(UpdateIeltsCoursesErrorState());
+      });
+    }catch(e){
+      emit(UpdateIeltsCoursesErrorState());
+    }
+  }
+
+
+  Future<void> deleteIeltsCourses({
+    required String section,
+    required String uId,
+  })async{
+    emit(DeleteIeltsCoursesLoadingState());
+    await FirebaseFirestore.instance.collection('coursesMaterial').doc('ielts').collection(section)
+        .doc(uId).delete().then((value) {
+      print('delete Success');
+      getIeltsCourses(section: section);
+      isUpload=true;
+      emit(DeleteIeltsCoursesSuccessState());
+    }).catchError((error){
+      debugPrint('Error in ielts Courses is ${error.toString()}');
+      isUpload=true;
+      emit(DeleteIeltsCoursesErrorState());
+    });
+  }
+
+
+
 
   Future<void> getIeltsSpeakingCourses({
     required String section,
@@ -658,6 +1189,107 @@ class AppCubit extends Cubit<AppStates> {
     }
   }
 
+  Future updateCambridgeCourses({
+    required String title,
+    int index=0,
+    required String section,
+    required String uId,
+  })async{
+    isUpload=true;
+    emit(UpdateCambridgeCoursesLoadingState());
+    FilePickerResult? result=await FilePicker.platform.pickFiles();
+    try{
+      File pick= File(result!.files.single.path.toString());
+      var file =pick.readAsBytesSync();
+      isUpload=false;
+      String name =DateTime.now().millisecondsSinceEpoch.toString();
+
+      var pdfFile =  FirebaseStorage.instance.ref().child('courses')
+          .child('cambridge')
+          .child(section)
+          .child('Pdf')
+          .child(title)
+          .child('$name.pdf');
+
+      UploadTask task= pdfFile.putData(file);
+      TaskSnapshot snapshot=await task;
+      url = await snapshot.ref.getDownloadURL();
+
+      MaterialModel materialModel=MaterialModel(
+          title: title,
+          url: url,
+          uId: uId
+      );
+
+      await FirebaseFirestore.instance.collection('coursesMaterial').doc('cambridge').collection(section)
+          .doc(uId)
+          .update(materialModel.toMap()).then((value) {
+        getCambridgeCourses(section: section);
+        isUpload=true;
+        emit(UpdateCambridgeCoursesSuccessState());
+      }).catchError((error){
+        debugPrint('Error in cambridge Courses is ${error.toString()}');
+        isUpload=true;
+        emit(UpdateCambridgeCoursesErrorState());
+      });
+    }catch(e){
+      emit(UpdateCambridgeCoursesErrorState());
+    }
+  }
+
+  Future updateCambridgeCoursesWithoutUrl({
+    required String title,
+    int index=0,
+    required String section,
+    required String uId,
+    required String url,
+  })async{
+    isUpload=true;
+    emit(UpdateCambridgeCoursesLoadingState());
+    try{
+      MaterialModel materialModel=MaterialModel(
+          title: title,
+          url: url,
+          uId: uId
+      );
+
+      await FirebaseFirestore.instance.collection('coursesMaterial').doc('cambridge').collection(section)
+          .doc(uId)
+          .update(materialModel.toMap()).then((value) {
+        getCambridgeCourses(section: section);
+        isUpload=true;
+        emit(UpdateCambridgeCoursesSuccessState());
+      }).catchError((error){
+        debugPrint('Error in cambridge Courses is ${error.toString()}');
+        isUpload=true;
+        emit(UpdateCambridgeCoursesErrorState());
+      });
+    }catch(e){
+      emit(UpdateCambridgeCoursesErrorState());
+    }
+  }
+
+
+
+  Future<void> deleteCambridgeCourses({
+    required String section,
+    required String uId,
+  })async{
+    emit(DeleteCambridgeCoursesLoadingState());
+    await FirebaseFirestore.instance.collection('coursesMaterial').doc('cambridge').collection(section)
+        .doc(uId).delete().then((value) {
+      print('delete Success');
+      getCambridgeCourses(section: section);
+      isUpload=true;
+      emit(DeleteCambridgeCoursesSuccessState());
+    }).catchError((error){
+      debugPrint('Error in cambridge Courses is ${error.toString()}');
+      isUpload=true;
+      emit(DeleteCambridgeCoursesErrorState());
+    });
+  }
+
+
   List<MaterialModel> cambridgeCoursesList=[];
   List<int> cambridgeTracksBool=List.generate(1000, (e) => 0);
 
@@ -700,6 +1332,119 @@ class AppCubit extends Cubit<AppStates> {
     });
 
   }
+
+  Future<void> deleteCambridgeSpeakingCourses({
+    required String section,
+    required String filed,
+    required String uId,
+  })async{
+    oxfordCoursesList=[];
+    emit(DeleteCambridgeCoursesLoadingState());
+    await FirebaseFirestore.instance.collection('coursesMaterial')
+        .doc('cambridge').collection(filed).doc(section).collection('data').doc(uId)
+        .delete().then((value) {
+
+      print('get Courses Success');
+      getCambridgeSpeakingCourses(section: section,filed: filed);
+      emit(DeleteCambridgetSpeakingSuccessState());
+    }).catchError((error) {
+      debugPrint('Error in Get cambridge Courses is ${error.toString()}');
+      emit(DeleteCambridgetSpeakingErrorState());
+    });
+
+  }
+
+  Future updateCambridgetSpeakingCourses({
+    required String title,
+    int index=0,
+    required String section,
+    required String filed,
+    required String uId,
+  })async{
+    isUpload=true;
+    emit(UpdateCambridgetSpeakingLoadingState());
+    print('start upload');
+    FilePickerResult? result=await FilePicker.platform.pickFiles();
+    try{
+      File pick= File(result!.files.single.path.toString());
+      var file =pick.readAsBytesSync();
+      isUpload=false;
+      String name =DateTime.now().millisecondsSinceEpoch.toString();
+
+      // upload to firebase
+      var pdfFile =  FirebaseStorage.instance.ref().child('courses')
+          .child('cambridge')
+          .child(section)
+          .child('Pdf')
+          .child(title)
+          .child('$name.pdf');
+
+      UploadTask task= pdfFile.putData(file);
+      TaskSnapshot snapshot=await task;
+      url = await snapshot.ref.getDownloadURL();
+
+      print(url);
+
+      MaterialModel materialModel=MaterialModel(
+          title: title,
+          url: url,
+          uId: uId
+      );
+
+      await FirebaseFirestore.instance.collection('coursesMaterial').doc('cambridge').collection(filed)
+          .doc(section).collection('data')
+          .doc(uId).update(materialModel.toMap()).then((value) {
+
+        getCambridgeSpeakingCourses(section: section,filed:filed );
+        isUpload=true;
+        emit(UpdateCambridgetSpeakingSuccessState());
+      }).catchError((error){
+        debugPrint('Error in cambridge Courses is ${error.toString()}');
+        isUpload=true;
+        emit(UpdateCambridgetSpeakingErrorState());
+      });
+    }catch(e){
+      emit(UpdateCambridgetSpeakingErrorState());
+    }
+  }
+
+  Future updateCambridgeSpeakingCoursesWithoutUrl({
+    required String title,
+    int index=0,
+    required String section,
+    required String filed,
+    required String uId,
+    required String url,
+  })async{
+    isUpload=true;
+    emit(UpdateCambridgetSpeakingLoadingState());
+    try{
+
+      MaterialModel materialModel=MaterialModel(
+          title: title,
+          url: url,
+          uId: uId
+      );
+
+      await FirebaseFirestore.instance.collection('coursesMaterial').doc('cambridge').collection(filed)
+          .doc(section).collection('data')
+          .doc(uId).update(materialModel.toMap()).then((value) {
+
+        getCambridgeSpeakingCourses(section: section,filed:filed );
+        isUpload=true;
+        emit(UpdateCambridgetSpeakingSuccessState());
+      }).catchError((error){
+        debugPrint('Error in cambridge Courses is ${error.toString()}');
+        isUpload=true;
+        emit(UpdateCambridgetSpeakingErrorState());
+      });
+    }catch(e){
+      emit(UpdateCambridgetSpeakingErrorState());
+    }
+  }
+
+
+
 
   Future uploadCambridgeSpeakingCourses({
     required String title,
@@ -942,6 +1687,43 @@ class AppCubit extends Cubit<AppStates> {
   }
 
 
+  Future<void> updateGroups({
+    required String courseName,
+    required String section,
+    required int count,
+    required String endDate,
+    required String endTime,
+    required String startDate,
+    required String startTime,
+    required String uId,
+    required bool status,
+  })async{
+    emit(UpdateGroupsLoadingState());
+    GroupModel groupModel=GroupModel(
+        count: count,
+        endDate: endDate,
+        endTime: endTime,
+        courseName: courseName,
+        startDate: startDate,
+        startTime: startTime,
+        status: status,
+        uId: uId
+    );
+
+    try{
+      await FirebaseFirestore.instance.collection('groups')
+          .doc(section)
+          .collection('data')
+         .doc(uId).update(groupModel.toMap());
+      getAllGroups(courseName: section);
+      emit(UpdateGroupsSuccessState());
+    }catch (e){
+      emit(UpdateGroupsErrorState());
+    }
+  }
+
+
+
   File? uploadedCertificateImage;
   var imagePicker = ImagePicker();
 
@@ -987,6 +1769,49 @@ class AppCubit extends Cubit<AppStates> {
     });
   }
 
+  Future<void> updateCertificateImage({
+    required String certificateName,
+    required String certificateLink,
+    required String uId,
+    required String certificateImage,
+  }) async {
+    emit(UpdateCertificateLoadingState());
+    if(uploadedCertificateImage==null){
+      FirebaseFirestore.instance.collection('certificates').doc(uId).update({
+        'certificateImage':certificateImage,
+        'certificateLink': certificateLink,
+        'certificateName': certificateName,
+        'uId':uId,
+      }).then((value) {
+        getCertificates();
+        emit(UpdateCertificateSuccessState());
+    }).catchError((error){
+    emit(UpdateCertificateErrorState());
+    });
+    }else{
+      FirebaseStorage.instance.ref()
+          .child('certificateImages/${Uri.file(uploadedCertificateImage!.path)
+          .pathSegments.last}').putFile(uploadedCertificateImage!).then((link){
+        link.ref.getDownloadURL().then((value) {
+          FirebaseFirestore.instance.collection('certificates').doc(uId).update({
+            'certificateImage': value.toString(),
+            'certificateLink': certificateLink,
+            'certificateName': certificateName,
+            'uId':uId,
+          }).then((value) {
+            getCertificates();
+            emit(UpdateCertificateSuccessState());
+          });
+        }).catchError((error){
+          emit(UpdateCertificateErrorState());
+        });
+      }).catchError((error){
+        emit(UpdateCertificateErrorState());
+      });
+    }
+
+  }
+
   TextEditingController startDateController = TextEditingController();
   TextEditingController endDateController = TextEditingController();
   TextEditingController endTimeController = TextEditingController();
@@ -1017,5 +1842,9 @@ class AppCubit extends Cubit<AppStates> {
     switchValue=value;
     emit(SwitchStatusState());
   }
+
+
+
+
 
 }

@@ -1,3 +1,4 @@
+import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/cambridg_course/speaking/edit_cambridget_speacking.dart';
 import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/cambridg_course/speaking/oxford_speaking_tabs/oxford_pdf/upload_oxford_speacking.dart';
 import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/lelts_course/speaking/ielts_speaking_tabs/pdf/upload_ielts_speacking.dart';
 import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/lelts_course/tracks/upload_tracks.dart';
@@ -136,6 +137,42 @@ class _TracksScreenState extends State<CambridgeAudioScreen> {
                                         ),
                                       ),
                                     ),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      IconButton(
+                                          onPressed: (){
+                                            cubit.deleteCambridgeSpeakingCourses(
+                                              section: 'audio',
+                                              filed: 'speaking',
+                                              uId: cubit.cambridgeCoursesList[index].uId,
+                                            );
+                                          },
+                                          icon: Icon(
+                                            Icons.delete,
+                                            color: Colors.red,
+                                            size: MediaQuery.of(context).size.height*0.03,
+                                          )
+                                      ),
+                                      SizedBox(width: MediaQuery.of(context).size.height*0.005,),
+                                      IconButton(
+                                          onPressed: (){
+                                            customPushNavigator(context, EditCambridgetSpeacking(
+                                              uId: cubit.cambridgeCoursesList[index].uId,
+                                              index: 0,
+                                              title: cubit.cambridgeCoursesList[index].title,
+                                              url: cubit.cambridgeCoursesList[index].url,
+                                              section: 'audio',
+                                            ));
+                                          },
+                                          icon: Icon(
+                                            Icons.edit,
+                                            color: ColorManager.primary,
+                                            size: MediaQuery.of(context).size.height*0.03,
+                                          )
+                                      ),
+                                    ],
                                   ),
                                 ]),
                           );

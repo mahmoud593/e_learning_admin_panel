@@ -54,6 +54,12 @@ class _PaymentRequestsScreenState extends State<ShowGroupDetailsScreen> {
             var cubit=AppCubit.get(context);
             return state is GetGroupsLoadingState?
             Center(child: CupertinoActivityIndicator(),) :
+            cubit.groups.isEmpty?
+            Center(child: Text('No Groups Available',style: TextStyle(
+              fontSize: MediaQuery.sizeOf(context).height*0.02,
+              fontWeight: FontWeight.bold,
+              color: ColorManager.black,
+            ))):
             Column(
               children: [
                 Expanded(
