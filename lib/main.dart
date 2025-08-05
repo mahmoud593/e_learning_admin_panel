@@ -2,6 +2,7 @@
 import 'package:e_learning_dathboard/admin_screens/admin_home/admin_home.dart';
 import 'package:e_learning_dathboard/admin_screens/splash_screen/splash_screen.dart';
 import 'package:e_learning_dathboard/business_logic/app_cubit/app_cubit.dart';
+import 'package:e_learning_dathboard/constants/cache_helper.dart';
 import 'package:e_learning_dathboard/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ import 'styles/color_manager.dart';
 void main() async{
 
   WidgetsFlutterBinding.ensureInitialized();
+  await CashHelper.init();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );

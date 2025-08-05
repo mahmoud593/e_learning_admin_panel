@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/cambridg_course/cambridg_course.dart';
 import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/lelts_course/ielts_course.dart';
 import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/oxford_course/oxford_course.dart';
+import 'package:e_learning_dathboard/admin_screens/group_info_screen/screens/online_face_screen.dart';
 import 'package:e_learning_dathboard/admin_screens/group_info_screen/screens/show_group_details_screen.dart';
 import 'package:e_learning_dathboard/constants/constants.dart';
 import 'package:e_learning_dathboard/styles/color_manager.dart';
@@ -11,7 +12,14 @@ import 'package:e_learning_dathboard/widgets/navigation.dart';
 import 'package:flutter/material.dart';
 
 class GroupInfoScreen extends StatelessWidget {
-  const GroupInfoScreen({super.key});
+   GroupInfoScreen({super.key});
+
+  List<String> image=[
+    'https://firebasestorage.googleapis.com/v0/b/elearningapp-4adde.appspot.com/o/WhatsApp%20Image%202025-05-07%20at%201.38.42%20AM.jpeg?alt=media&token=7dc8717a-4e85-4c27-a76c-3ab244229559',
+    'https://firebasestorage.googleapis.com/v0/b/elearningapp-4adde.appspot.com/o/WhatsApp%20Image%202025-05-07%20at%201.38.42%20AM%20(1).jpeg?alt=media&token=6bb6b54e-9c80-4f9a-bcbc-faa2b29d0364',
+    'https://firebasestorage.googleapis.com/v0/b/elearningapp-4adde.appspot.com/o/WhatsApp%20Image%202025-05-07%20at%201.38.43%20AM.jpeg?alt=media&token=0009fb9c-2e9c-42c3-8c15-eef863e2c4a8'
+  ];
+
 
   @override
   Widget build(BuildContext context) {
@@ -51,11 +59,11 @@ class GroupInfoScreen extends StatelessWidget {
                   return InkWell(
                     onTap: (){
                       if(index==0){
-                        customPushNavigator(context, ShowGroupDetailsScreen(courseName: 'oxford',));
+                        customPushNavigator(context, OnlineFaceScreen(courseName: 'oxford',));
                       }else if(index==1){
-                        customPushNavigator(context, ShowGroupDetailsScreen(courseName: 'Cambridge',));
+                        customPushNavigator(context, OnlineFaceScreen(courseName: 'Cambridge',));
                       }else if(index==2){
-                        customPushNavigator(context, ShowGroupDetailsScreen(courseName: 'ielts',));
+                        customPushNavigator(context, OnlineFaceScreen(courseName: 'ielts',));
                       }
                     },
                     child: Container(
@@ -85,7 +93,7 @@ class GroupInfoScreen extends StatelessWidget {
                                 ),
                                 child: CachedNetworkImage(
                                   fit: BoxFit.cover,
-                                  imageUrl: 'https://img.freepik.com/free-vector/hand-drawn-flat-design-stack-books-illustration_23-2149341898.jpg?w=740&t=st=1704621629~exp=1704622229~hmac=d1b415f8eafa39a4da38000cad51e9cf8d867f79599909273bb7a0ed5ef44052',
+                                  imageUrl: image[index],
                                   progressIndicatorBuilder:  (context, url,downloadProgress) {
                                     return const Center(child: CircularProgressIndicator(),);
                                   },

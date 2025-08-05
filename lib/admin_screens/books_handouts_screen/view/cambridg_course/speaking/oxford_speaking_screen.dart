@@ -2,6 +2,7 @@
 import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/speaking_tabs/audioScreen/audio.dart';
 import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/speaking_tabs/pdf/pdf.dart';
 import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/speaking_tabs/videoes/videoes.dart';
+import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/cambridg_course/speaking/oxford_speaking_tabs/cambridge_video_screen/cambridge_video_screen.dart';
 import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/cambridg_course/speaking/oxford_speaking_tabs/oxford_audioScreen/audio.dart';
 import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/cambridg_course/speaking/oxford_speaking_tabs/oxford_pdf/pdf.dart';
 import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/lelts_course/speaking/ielts_speaking_tabs/audioScreen/audio.dart';
@@ -23,7 +24,7 @@ class CambridgeSpeakingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
           /// appbar
           appBar: AppBar(
@@ -49,6 +50,11 @@ class CambridgeSpeakingScreen extends StatelessWidget {
                             style: TextStyle(
                               fontSize:  MediaQuery.sizeOf(context).height*0.02,
                             ))),
+                    Tab(
+                        child: Text('Video',
+                            style: TextStyle(
+                              fontSize:  MediaQuery.sizeOf(context).height*0.02,
+                            ))),
                   ])),
 
           /// tabview
@@ -56,6 +62,7 @@ class CambridgeSpeakingScreen extends StatelessWidget {
             children: [
               CambridgeAudioScreen(),
               CambridgePdfSpeakerScreen(),
+              CambridgeVideoScreen(),
             ],
           )),
     );

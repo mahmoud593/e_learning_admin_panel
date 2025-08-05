@@ -10,8 +10,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 class EditOxfordHandouts extends StatefulWidget {
-   EditOxfordHandouts({super.key,required this.section, required this.uId,required this.title,required this.url});
+   EditOxfordHandouts({super.key,required this.section, required this.uId,
+     required this.type,
+     required this.title,required this.url});
   final String section;
+  final String type;
   final String uId;
   final String title;
   final String url;
@@ -80,6 +83,7 @@ class _EditOxfordHandoutsState extends State<EditOxfordHandouts> {
                       GestureDetector(
                         onTap: (){
                           cubit.updateOxfordCourses(
+                              type: widget.type,
                               title: controller.text,
                               uId: widget.uId,
                               section: widget.section

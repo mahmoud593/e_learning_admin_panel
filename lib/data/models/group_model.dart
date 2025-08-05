@@ -6,6 +6,7 @@
       required this.endTime,
       required this.startDate,
       required this.startTime,
+      required this.coursePrice,
       required this.uId,
       required this.courseName,
       required this.status,
@@ -13,6 +14,7 @@
 
   final String endDate;
   final int count;
+  final double coursePrice;
   final String endTime;
   final String startDate;
   final String courseName;
@@ -25,6 +27,7 @@
     endDate: json["endDate"],
     count: json["count"],
     endTime: json["endTime"],
+    coursePrice: json["coursePrice"],
     startDate: json["startDate"],
     courseName: json["courseName"],
     startTime: json["startTime"],
@@ -36,6 +39,7 @@
     "endDate": endDate,
     "count": count,
     "endTime": endTime,
+    "coursePrice": coursePrice,
     "startDate": startDate,
     "courseName": courseName,
     "startTime": startTime,

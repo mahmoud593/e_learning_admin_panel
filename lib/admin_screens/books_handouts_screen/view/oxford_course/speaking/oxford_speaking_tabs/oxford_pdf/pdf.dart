@@ -12,6 +12,7 @@ import 'package:e_learning_dathboard/styles/color_manager.dart';
 import 'package:e_learning_dathboard/widgets/navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:share_plus/share_plus.dart';
 
 class OxfordPdfSpeakerScreen extends StatefulWidget {
   const OxfordPdfSpeakerScreen({super.key});
@@ -127,6 +128,16 @@ class _IeltsHandoutsScreenState extends State<OxfordPdfSpeakerScreen> {
                                           ),
                                           maxLines: 2,
                                         ),
+                                      ),
+
+                                      IconButton(
+                                          onPressed:()async{
+                                            await Share.share(' اسمع هذا الملف : ${cubit.oxfordCoursesList[index].title} \n ${cubit.oxfordCoursesList[index].url}');
+                                          } ,
+                                          icon: Icon(Icons.share,
+                                            color: ColorManager.primary,
+                                            size: MediaQuery.of(context).size.height*0.03,
+                                          )
                                       )
                                     ]
                                 ),

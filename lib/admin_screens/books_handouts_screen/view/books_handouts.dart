@@ -21,6 +21,12 @@ class BooksAndHandoutsScreen extends StatelessWidget {
       ()=>customPushNavigator(context,  IeltsCourseScreen())
     ];
 
+    List<String> image=[
+      'https://firebasestorage.googleapis.com/v0/b/elearningapp-4adde.appspot.com/o/WhatsApp%20Image%202025-05-07%20at%201.38.42%20AM.jpeg?alt=media&token=7dc8717a-4e85-4c27-a76c-3ab244229559',
+      'https://firebasestorage.googleapis.com/v0/b/elearningapp-4adde.appspot.com/o/WhatsApp%20Image%202025-05-07%20at%201.38.42%20AM%20(1).jpeg?alt=media&token=6bb6b54e-9c80-4f9a-bcbc-faa2b29d0364',
+      'https://firebasestorage.googleapis.com/v0/b/elearningapp-4adde.appspot.com/o/WhatsApp%20Image%202025-05-07%20at%201.38.43%20AM.jpeg?alt=media&token=0009fb9c-2e9c-42c3-8c15-eef863e2c4a8'
+    ];
+
     return Scaffold(
       appBar: AppBar(
         leading: InkWell(
@@ -81,7 +87,7 @@ class BooksAndHandoutsScreen extends StatelessWidget {
                                 ),
                                 child: CachedNetworkImage(
                                   fit: BoxFit.cover,
-                                  imageUrl: 'https://img.freepik.com/free-vector/hand-drawn-flat-design-stack-books-illustration_23-2149341898.jpg?w=740&t=st=1704621629~exp=1704622229~hmac=d1b415f8eafa39a4da38000cad51e9cf8d867f79599909273bb7a0ed5ef44052',
+                                  imageUrl: image[index],
                                   progressIndicatorBuilder:  (context, url,downloadProgress) {
                                     return const Center(child: CircularProgressIndicator(),);
                                   },

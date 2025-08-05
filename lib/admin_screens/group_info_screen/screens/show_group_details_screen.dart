@@ -12,8 +12,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 
 class ShowGroupDetailsScreen extends StatefulWidget {
-  const ShowGroupDetailsScreen({Key? key,required this.courseName}) : super(key: key);
+  const ShowGroupDetailsScreen({Key? key,required this.courseName,required this.type,required this.payType}) : super(key: key);
   final String courseName;
+  final String type;
+  final String payType;
 
   @override
   State<ShowGroupDetailsScreen> createState() => _PaymentRequestsScreenState();
@@ -24,7 +26,7 @@ class _PaymentRequestsScreenState extends State<ShowGroupDetailsScreen> {
   @override
   void initState() {
     super.initState();
-    AppCubit.get(context).getAllGroups(courseName: widget.courseName);
+    AppCubit.get(context).getAllGroups(courseName: widget.courseName, type: widget.type, payType: widget.payType);
   }
 
   @override
@@ -67,7 +69,7 @@ class _PaymentRequestsScreenState extends State<ShowGroupDetailsScreen> {
                     physics: const BouncingScrollPhysics(),
                     shrinkWrap: true,
                     itemBuilder: (context,index){
-                      return GroupListItem(groupModel: cubit.groups[index],section: widget.courseName,);
+                      return GroupListItem(groupModel: cubit.groups[index],section: widget.courseName,type:  widget.type,payType: widget.payType,);
                     },
                     separatorBuilder: (context,index){
                       return Container();
@@ -82,7 +84,7 @@ class _PaymentRequestsScreenState extends State<ShowGroupDetailsScreen> {
         floatingActionButton: FloatingActionButton(
             backgroundColor: ColorManager.primary,
             onPressed: (){
-               customPushNavigator(context, AddGroupScreen(section: widget.courseName,));
+               customPushNavigator(context, AddGroupScreen(section: widget.courseName,type:widget.type ,payType: widget.payType,));
             },
             child: Icon(Icons.add,color: Colors.white,),
         ),

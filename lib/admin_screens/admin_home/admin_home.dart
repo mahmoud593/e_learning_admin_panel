@@ -5,6 +5,7 @@ import 'package:e_learning_dathboard/admin_screens/certificates/screens/manage_c
 import 'package:e_learning_dathboard/admin_screens/free_note_screen/view/free_note_screen.dart';
 import 'package:e_learning_dathboard/admin_screens/group_info_screen/screens/group_info_screen.dart';
 import 'package:e_learning_dathboard/admin_screens/placement_tests/view/placements_screen.dart';
+import 'package:e_learning_dathboard/admin_screens/reviews/screens/review_screen.dart';
 import 'package:e_learning_dathboard/widgets/navigate_to.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,10 +27,11 @@ class AdminHome extends StatelessWidget {
        ()=>navigateTo(context, const AllUser(verified: true,)),
        ()=>navigateTo(context, const BooksAndHandoutsScreen()),
        ()=>navigateTo(context, const FreeNoteScreen()),
-       ()=>navigateTo(context, const GroupInfoScreen()),
-       ()=>navigateTo(context, const PlacementsScreen()),
+       ()=>navigateTo(context,  GroupInfoScreen()),
+       ()=>navigateTo(context,  PlacementsScreen()),
        ()=>navigateTo(context, const PaymentRequestsScreen()),
        ()=>navigateTo(context, const ManageCertificateScreen()),
+       ()=>navigateTo(context, const ReviewScreen()),
     ];
 
     return BlocConsumer<AppCubit,AppStates>(

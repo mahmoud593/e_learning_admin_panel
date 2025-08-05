@@ -4,6 +4,7 @@ import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/ho
 import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/oxford_course/handouts/oxford_handouts_screen.dart';
 import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/oxford_course/home_work/home_work.dart';
 import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/oxford_course/mock_exams/oxford_home_work_screen.dart';
+import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/oxford_course/mock_exams/oxford_tabs_mock_screen.dart';
 import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/oxford_course/speaking/oxford_speaking_screen.dart';
 import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/oxford_course/tracks/oxford_tracks_screen.dart';
 import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/speaking_screen.dart';
@@ -24,7 +25,7 @@ class OxfordCourseScreen extends StatelessWidget {
           ()=>customPushNavigator(context, const OxfordSpeakingScreen()),
           ()=>customPushNavigator(context, const OxfordTracksScreen()),
           ()=>customPushNavigator(context, const HomeWorkOxfordScreen()),
-          ()=>customPushNavigator(context, const OxfordMockExamsScreen(title: 'Mock Exams',)),
+          ()=>customPushNavigator(context, const OxfordTabsMockScreen()),
     ];
     return Scaffold(
       appBar: AppBar(

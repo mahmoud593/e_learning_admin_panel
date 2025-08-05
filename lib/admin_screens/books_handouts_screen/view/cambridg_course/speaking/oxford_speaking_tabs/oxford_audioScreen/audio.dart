@@ -10,6 +10,7 @@ import 'package:e_learning_dathboard/widgets/navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_audio_waveforms/flutter_audio_waveforms.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:share_plus/share_plus.dart';
 
 class CambridgeAudioScreen extends StatefulWidget {
   const CambridgeAudioScreen({super.key});
@@ -89,6 +90,16 @@ class _TracksScreenState extends State<CambridgeAudioScreen> {
                                                 .height *
                                                 0.022,
                                           )),
+                                      Spacer(),
+                                      IconButton(
+                                          onPressed:()async{
+                                            await Share.share(' اسمع هذا الملف : ${cubit.cambridgeCoursesList[index].title} \n ${cubit.cambridgeCoursesList[index].url}');
+                                          } ,
+                                          icon: Icon(Icons.share,
+                                            color: ColorManager.primary,
+                                            size: MediaQuery.of(context).size.height*0.03,
+                                          )
+                                      )
                                     ],
                                   ),
                                   SizedBox(

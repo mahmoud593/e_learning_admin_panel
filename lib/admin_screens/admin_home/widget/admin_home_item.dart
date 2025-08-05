@@ -14,6 +14,7 @@ class AdminHomeItem extends StatelessWidget {
     'Placement Test',
     'Payments Orders',
     'Manage Certificates',
+    'Review Students',
   ];
 
   static List imageName=[

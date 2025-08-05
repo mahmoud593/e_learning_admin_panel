@@ -10,6 +10,9 @@ import 'package:e_learning_dathboard/styles/color_manager.dart';
 import 'package:e_learning_dathboard/widgets/navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:share_plus/share_plus.dart';
+
+
 
 class OxfordHandoutsScreen extends StatefulWidget {
   final String title;
@@ -144,6 +147,16 @@ class _OxfordHandoutsScreenState extends State<OxfordHandoutsScreen> {
                                           ),
                                           maxLines: 2,
                                         ),
+                                      ),
+
+                                      IconButton(
+                                          onPressed:()async{
+                                            await Share.share(' اطلع علي كتاب : ${cubit.oxfordCoursesList[index].title} \n ${cubit.oxfordCoursesList[index].url}');
+                                          } ,
+                                          icon: Icon(Icons.share,
+                                            color: ColorManager.white,
+                                            size: MediaQuery.of(context).size.height*0.03,
+                                          )
                                       )
                                     ]
                                 ),
@@ -167,6 +180,7 @@ class _OxfordHandoutsScreenState extends State<OxfordHandoutsScreen> {
                                     IconButton(
                                         onPressed: (){
                                           customPushNavigator(context, EditOxfordHandouts(
+                                            type: '',
                                             uId: cubit.oxfordCoursesList[index].uId,
                                             title: cubit.oxfordCoursesList[index].title,
                                             url: cubit.oxfordCoursesList[index].url,

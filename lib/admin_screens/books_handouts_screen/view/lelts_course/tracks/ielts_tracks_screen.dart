@@ -8,6 +8,7 @@ import 'package:e_learning_dathboard/widgets/navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_audio_waveforms/flutter_audio_waveforms.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:share_plus/share_plus.dart';
 
 class IeltsTracksScreen extends StatefulWidget {
   const IeltsTracksScreen({super.key});
@@ -94,6 +95,17 @@ class _TracksScreenState extends State<IeltsTracksScreen> {
                                                 .height *
                                                 0.022,
                                           )),
+                                      const Spacer(),
+                                      IconButton(
+                                          onPressed:()async{
+                                            await Share.share(' اسمع هذا الملف : ${cubit.ieltsCoursesList[index].title} '
+                                                '\n ${cubit.ieltsCoursesList[index].url}');
+                                          } ,
+                                          icon: Icon(Icons.share,
+                                            color: ColorManager.primary,
+                                            size: MediaQuery.of(context).size.height*0.03,
+                                          )
+                                      )
                                     ],
                                   ),
                                   SizedBox(

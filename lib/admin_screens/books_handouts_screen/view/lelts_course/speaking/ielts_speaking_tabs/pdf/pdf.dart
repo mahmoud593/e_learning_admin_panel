@@ -11,6 +11,7 @@ import 'package:e_learning_dathboard/styles/color_manager.dart';
 import 'package:e_learning_dathboard/widgets/navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:share_plus/share_plus.dart';
 
 class IeltsPdfSpeakerScreen extends StatefulWidget {
   const IeltsPdfSpeakerScreen({super.key});
@@ -126,6 +127,16 @@ class _IeltsHandoutsScreenState extends State<IeltsPdfSpeakerScreen> {
                                           ),
                                           maxLines: 2,
                                         ),
+                                      ),
+                                      IconButton(
+                                          onPressed:()async{
+                                            await Share.share(' اطلع هذا الملف : ${cubit.ieltsCoursesList[index].title} '
+                                                '\n ${cubit.ieltsCoursesList[index].url}');
+                                          } ,
+                                          icon: Icon(Icons.share,
+                                            color: ColorManager.white,
+                                            size: MediaQuery.of(context).size.height*0.03,
+                                          )
                                       )
                                     ]
                                 ),

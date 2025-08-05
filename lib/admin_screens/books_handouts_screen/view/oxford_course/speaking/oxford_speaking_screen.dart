@@ -6,6 +6,7 @@ import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/le
 import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/lelts_course/speaking/ielts_speaking_tabs/pdf/pdf.dart';
 import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/oxford_course/speaking/oxford_speaking_tabs/oxford_audioScreen/audio.dart';
 import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/oxford_course/speaking/oxford_speaking_tabs/oxford_pdf/pdf.dart';
+import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/oxford_course/speaking/oxford_speaking_tabs/oxford_video_screen/oxford_video_screen.dart';
 import 'package:e_learning_dathboard/styles/color_manager.dart';
 import 'package:flutter/material.dart';
 
@@ -21,7 +22,7 @@ class OxfordSpeakingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
           /// appbar
           appBar: AppBar(
@@ -47,6 +48,11 @@ class OxfordSpeakingScreen extends StatelessWidget {
                             style: TextStyle(
                               fontSize:  MediaQuery.sizeOf(context).height*0.02,
                             ))),
+                    Tab(
+                        child: Text('Video',
+                            style: TextStyle(
+                              fontSize:  MediaQuery.sizeOf(context).height*0.02,
+                            ))),
                   ])),
 
           /// tabview
@@ -54,6 +60,7 @@ class OxfordSpeakingScreen extends StatelessWidget {
             children: [
               OxfordAudioScreen(),
               OxfordPdfSpeakerScreen(),
+              OxfordVideoScreen(),
             ],
           )),
     );

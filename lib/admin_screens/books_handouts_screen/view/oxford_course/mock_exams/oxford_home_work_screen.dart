@@ -10,6 +10,7 @@ import 'package:e_learning_dathboard/styles/color_manager.dart';
 import 'package:e_learning_dathboard/widgets/navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:share_plus/share_plus.dart';
 
 class OxfordMockExamsScreen extends StatefulWidget {
   final String title;
@@ -24,7 +25,7 @@ class _OxfordHandoutsScreenState extends State<OxfordMockExamsScreen> {
   @override
   void initState() {
     super.initState();
-    AppCubit.get(context).getOxfordCourses(section: 'mockExams');
+    AppCubit.get(context).getOxfordCourses(section: 'mockExams',type: 'exams');
   }
 
   @override
@@ -37,27 +38,6 @@ class _OxfordHandoutsScreenState extends State<OxfordMockExamsScreen> {
       builder: (context,state){
         var cubit=AppCubit.get(context);
         return Scaffold(
-          appBar: AppBar(
-            leading: InkWell(
-              onTap: (){
-                Navigator.pop(context);
-              },
-              child: Icon(
-                Icons.arrow_back,
-                color: ColorManager.black,
-                size:  MediaQuery.of(context).size.height*0.03,
-              ),
-            ),
-            title: Text(
-              widget.title,
-              style: TextStyle(
-                color: ColorManager.black,
-                fontSize:  MediaQuery.of(context).size.height*0.025,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            backgroundColor: ColorManager.white,
-          ),
           floatingActionButton: FloatingActionButton(
               backgroundColor: Colors.redAccent,
               onPressed: (){
@@ -146,6 +126,15 @@ class _OxfordHandoutsScreenState extends State<OxfordMockExamsScreen> {
                                           ),
                                           maxLines: 2,
                                         ),
+                                      ),
+                                      IconButton(
+                                          onPressed:()async{
+                                            await Share.share(' اطلع هذا الملف : ${cubit.oxfordCoursesList[index].title} \n ${cubit.oxfordCoursesList[index].url}');
+                                          } ,
+                                          icon: Icon(Icons.share,
+                                            color: ColorManager.white,
+                                            size: MediaQuery.of(context).size.height*0.03,
+                                          )
                                       )
                                     ]
                                 ),
@@ -169,6 +158,7 @@ class _OxfordHandoutsScreenState extends State<OxfordMockExamsScreen> {
                                     IconButton(
                                         onPressed: (){
                                           customPushNavigator(context, EditOxfordHandouts(
+                                            type:'exams',
                                             uId: cubit.oxfordCoursesList[index].uId,
                                             title: cubit.oxfordCoursesList[index].title,
                                             url: cubit.oxfordCoursesList[index].url,

@@ -9,10 +9,12 @@ import 'package:flutter/material.dart';
 
 
 class GroupListItem extends StatelessWidget {
-  const GroupListItem({super.key, required this.groupModel,required this.section});
+  const GroupListItem({super.key, required this.groupModel,required this.section, required this.type, required this.payType});
 
   final GroupModel groupModel;
   final String section;
+  final String type;
+  final String payType ;
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +48,8 @@ class GroupListItem extends StatelessWidget {
                         onPressed: (){
                           AppCubit.get(context).deleteGroups(
                               courseName: section,
+                              type: type,
+                              payType: payType,
                               uId: groupModel.uId.toString()
                           );
                         },
@@ -60,6 +64,9 @@ class GroupListItem extends StatelessWidget {
                       child: IconButton(
                         onPressed: (){
                           customPushNavigator(context, EditGroupInfo(
+                            type: type,
+                            payType: payType,
+                            coursePrice:double.parse(groupModel.coursePrice.toString()) ,
                             section: section,
                             uId: groupModel.uId.toString(),
                             courseName: groupModel.courseName.toString(),

@@ -63,6 +63,9 @@ dependencies:
   flutter_audio_waveforms:
   video_player:
   syncfusion_flutter_pdfviewer: ^28.1.38
+  share_plus:
+  expandable:
+
 
   #Firebase
   firebase_core:

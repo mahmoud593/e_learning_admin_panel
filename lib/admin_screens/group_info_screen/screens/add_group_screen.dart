@@ -11,9 +11,12 @@ import 'package:intl/intl.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 class AddGroupScreen extends StatelessWidget {
-  AddGroupScreen({super.key,required this.section});
+  AddGroupScreen({super.key,required this.section, required this.type, required this.payType});
   final String section;
+  final String type;
+  final String payType ;
   TextEditingController countController = TextEditingController();
+  TextEditingController coursePriceController = TextEditingController();
   TextEditingController statusController = TextEditingController();
   TextEditingController courseNameController = TextEditingController();
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -34,6 +37,7 @@ class AddGroupScreen extends StatelessWidget {
             countController.text='';
             courseNameController.text='';
             statusController.text='';
+            coursePriceController.text='';
             AppCubit.get(context).startTimeController.text='';
             AppCubit.get(context).startDateController.text='';
             AppCubit.get(context).endTimeController.text='';
@@ -90,6 +94,46 @@ class AddGroupScreen extends StatelessWidget {
                       ),
 
                       SizedBox(height: MediaQuery.sizeOf(context).height*0.02,),
+
+
+                      Text('Course Price',style: TextStyle(
+                          color: Colors.black,
+                          fontSize: MediaQuery.sizeOf(context).height*0.025
+                      ),),
+
+                      SizedBox(height: MediaQuery.sizeOf(context).height*0.01,),
+
+                      Row(
+                        children: [
+                          Expanded(
+                            child: DefaultFormField(
+                              validText: 'Please enter course price',
+                              hint: 'Enter Course Price',
+                              controller: coursePriceController,
+                              textInputType: TextInputType.number,
+                            ),
+                          ),
+                          const SizedBox(width: 8), // مسافة بسيطة بين العنصرين
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[200],
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: const Text(
+                              'SAR',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+
+
+                      SizedBox(height: MediaQuery.sizeOf(context).height*0.02,),
+
 
                       Text('Start Date',style: TextStyle(
                           color: Colors.black,
@@ -240,7 +284,10 @@ class AddGroupScreen extends StatelessWidget {
                         onPressed: (){
                           if(formKey.currentState!.validate()){
                              cubit.uploadGroups(
+                               payType: payType,
                                section: section,
+                                coursePrice: double.parse(coursePriceController.text),
+                               type: type,
                                count: int.parse(countController.text),
                                courseName: courseNameController.text,
                                endDate: cubit.endDateController.text,

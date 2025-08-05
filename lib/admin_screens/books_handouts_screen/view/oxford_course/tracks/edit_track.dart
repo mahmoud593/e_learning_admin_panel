@@ -80,6 +80,7 @@ class _EditOxfordHandoutsState extends State<EditOxfordTrack> {
                       GestureDetector(
                         onTap: (){
                           cubit.updateOxfordCourses(
+                              type:'',
                               title: controller.text,
                               uId: widget.uId,
                               section: widget.section
