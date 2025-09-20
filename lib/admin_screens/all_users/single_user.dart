@@ -12,7 +12,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../business_logic/app_cubit/app_states.dart';
 import '../../data/models/user_model.dart';
 
-class SingleUser extends StatelessWidget {
+class SingleUser extends StatefulWidget {
   final StudentModel studentModel;
   final bool isVerified;
   const SingleUser({super.key,
@@ -20,6 +20,11 @@ class SingleUser extends StatelessWidget {
     required this.isVerified,
   });
 
+  @override
+  State<SingleUser> createState() => _SingleUserState();
+}
+
+class _SingleUserState extends State<SingleUser> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AppCubit,AppStates>(
@@ -75,7 +80,7 @@ class SingleUser extends StatelessWidget {
 
                     TextFormField(
                       decoration: InputDecoration(
-                        hintText: studentModel.studentName,
+                        hintText: widget.studentModel.studentName,
                         iconColor: ColorManager.primary,
                         enabled: false,
                         hintStyle: TextStyle(
@@ -109,7 +114,7 @@ class SingleUser extends StatelessWidget {
 
                     TextFormField(
                       decoration: InputDecoration(
-                        hintText: studentModel.email,
+                        hintText: widget.studentModel.email,
                         iconColor: ColorManager.primary,
                         enabled: false,
                         hintStyle: TextStyle(
@@ -144,7 +149,7 @@ class SingleUser extends StatelessWidget {
 
                     TextFormField(
                       decoration: InputDecoration(
-                        hintText: studentModel.studentPhone,
+                        hintText: widget.studentModel.studentPhone,
                         iconColor: ColorManager.primary,
                         enabled: false,
                         hintStyle: TextStyle(
@@ -178,7 +183,7 @@ class SingleUser extends StatelessWidget {
 
                     TextFormField(
                       decoration: InputDecoration(
-                        hintText: studentModel.session[0],
+                        hintText: widget.studentModel.session[0],
                         iconColor: ColorManager.primary,
                         enabled: false,
                         hintStyle: TextStyle(
@@ -212,7 +217,7 @@ class SingleUser extends StatelessWidget {
 
                     TextFormField(
                       decoration: InputDecoration(
-                        hintText: studentModel.board,
+                        hintText: widget.studentModel.board,
                         iconColor: ColorManager.primary,
                         enabled: false,
                         hintStyle: TextStyle(
@@ -247,7 +252,7 @@ class SingleUser extends StatelessWidget {
 
                     TextFormField(
                       decoration: InputDecoration(
-                        hintText: studentModel.school,
+                        hintText: widget.studentModel.school,
                         iconColor: ColorManager.primary,
                         enabled: false,
                         hintStyle: TextStyle(
@@ -282,7 +287,7 @@ class SingleUser extends StatelessWidget {
 
                     TextFormField(
                       decoration: InputDecoration(
-                        hintText: studentModel.parentName,
+                        hintText: widget.studentModel.parentName,
                         iconColor: ColorManager.primary,
                         enabled: false,
                         hintStyle: TextStyle(
@@ -318,7 +323,7 @@ class SingleUser extends StatelessWidget {
 
                     TextFormField(
                       decoration: InputDecoration(
-                        hintText: studentModel.parentPhone,
+                        hintText: widget.studentModel.parentPhone,
                         iconColor: ColorManager.primary,
                         enabled: false,
                         hintStyle: TextStyle(
@@ -353,7 +358,7 @@ class SingleUser extends StatelessWidget {
 
                     TextFormField(
                       decoration: InputDecoration(
-                        hintText: studentModel.isPayment==true?'Paid':'Not Paid',
+                        hintText: widget.studentModel.isPayment==true?'Paid':'Not Paid',
                         iconColor: ColorManager.primary,
                         enabled: false,
                         hintStyle: TextStyle(
@@ -375,20 +380,101 @@ class SingleUser extends StatelessWidget {
 
                     SizedBox(height: MediaQuery.of(context).size.height*.03,),
 
-                    isVerified==true?
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Text('Ielts Subscription',
+                        style: textManager(color: ColorManager.black,fontWeight: FontWeight.w500),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+
+                    SizedBox(height: MediaQuery.of(context).size.height*.01,),
+
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Switch(
+                          value: widget.studentModel.isVerifyIlets,
+                          onChanged: (value){
+                            setState(() {
+                              widget.studentModel.isVerifyIlets = value;
+                            });
+                            cubit.verifiyIeltsUser(userId: widget.studentModel.uId, value: value);
+                          }
+                      ),
+                    ),
+
+                    SizedBox(height: MediaQuery.of(context).size.height*.03,),
+
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Text('Oxford Subscription',
+                        style: textManager(color: ColorManager.black,fontWeight: FontWeight.w500),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+
+                    SizedBox(height: MediaQuery.of(context).size.height*.01,),
+
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Switch(
+                          value: widget.studentModel.isVerifyOxford,
+                          onChanged: (value){
+                            setState(() {
+                              widget.studentModel.isVerifyOxford = value;
+                            });
+                            cubit.verifiyOxfordUser(userId: widget.studentModel.uId, value: value);
+                          }
+                      ),
+                    ),
+
+                    SizedBox(height: MediaQuery.of(context).size.height*.03,),
+
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Text('Cambridge Subscription',
+                        style: textManager(color: ColorManager.black,fontWeight: FontWeight.w500),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+
+                    SizedBox(height: MediaQuery.of(context).size.height*.01,),
+
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Switch(
+                          value: widget.studentModel.isVerifyCambridge,
+                          onChanged: (value){
+                            setState(() {
+                              widget.studentModel.isVerifyCambridge = value;
+                            });
+                            cubit.verifiyCambridgeUser(userId: widget.studentModel.uId, value: value);
+                          }
+                      ),
+                    ),
+
+                    SizedBox(height: MediaQuery.of(context).size.height*.03,),
+
+                    widget.isVerified==true?
                     DefaultButton(
                         color: ColorManager.primary,
                         text: 'Verify User',
                         onPressed: (){
                           cubit.verifiyUser(
-                            userId: studentModel.uId,
+                            userId: widget.studentModel.uId,
                           ).then((value) {
                             Navigator.pop(context);
                           });
+                          AppCubit.get(context).sendNotification(
+                            uId: widget.studentModel.uId,
+                            title: 'User Verified',
+                            body: ' Your account has been verified successfully.',
+                            token: AppCubit.get(context).fcmToken,
+                          );
                         }
                     ):Container(),
 
-                    isVerified==true?
+                    widget.isVerified==true?
                     SizedBox(height: MediaQuery.of(context).size.height*.03,):Container(),
 
                     DefaultButton(
@@ -396,10 +482,16 @@ class SingleUser extends StatelessWidget {
                         text: 'Delete User',
                         onPressed: (){
                           cubit.deleteUser(
-                            userId: studentModel.uId,
+                            userId: widget.studentModel.uId,
                           ).then((value) {
                             Navigator.pop(context);
                           });
+                          AppCubit.get(context).sendNotification(
+                            uId: widget.studentModel.uId,
+                            title: 'User Deleted',
+                            body: 'Your account has been deleted.',
+                            token: AppCubit.get(context).fcmToken,
+                          );
                         }
                     ),
 

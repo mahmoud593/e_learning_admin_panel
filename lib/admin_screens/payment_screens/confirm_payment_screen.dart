@@ -91,6 +91,12 @@ class ConfirmPaymentScreen extends StatelessWidget {
                     text:'Confirm',
                     onPressed: (){
                       AppCubit.get(context).verifiyUserPaid(userId: paymentModel.userId,paymentId: paymentModel.paymentId);
+                      AppCubit.get(context).sendNotification(
+                        uId: paymentModel.userId,
+                        title: 'Payment Confirmed',
+                        body: 'Your payment has been confirmed successfully.',
+                        token: AppCubit.get(context).fcmToken,
+                      );
                     },
                     color: ColorManager.primary,
                   ),

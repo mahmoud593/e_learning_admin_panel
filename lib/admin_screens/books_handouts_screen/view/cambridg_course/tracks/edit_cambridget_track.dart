@@ -80,6 +80,7 @@ class _EditOxfordHandoutsState extends State<EditCambridgetTrack> {
                       GestureDetector(
                         onTap: (){
                           cubit.updateCambridgeCourses(
+                              type: '',
                               title: controller.text,
                               uId: widget.uId,
                               section: widget.section
@@ -119,6 +120,7 @@ class _EditOxfordHandoutsState extends State<EditCambridgetTrack> {
                         color: ColorManager.primary,
                         onPressed: (){
                           cubit.updateCambridgeCoursesWithoutUrl(
+                              type: '',
                               title: controller.text,
                               uId: widget.uId,
                               url: widget.url,

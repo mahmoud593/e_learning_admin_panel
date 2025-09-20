@@ -10,8 +10,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 class EditCambridgeHandouts extends StatefulWidget {
-  const EditCambridgeHandouts({super.key,required this.section, required this.uId,required this.title,required this.url});
+  const EditCambridgeHandouts({super.key,required this.section, required this.uId,required this.title,required this.url,required this.type});
   final String section;
+  final String type;
   final String uId;
   final String title;
   final String url;
@@ -80,6 +81,7 @@ class _EditOxfordHandoutsState extends State<EditCambridgeHandouts> {
                       GestureDetector(
                         onTap: (){
                           cubit.updateCambridgeCourses(
+                              type: widget.type,
                               title: controller.text,
                               uId: widget.uId,
                               section: widget.section
@@ -119,6 +121,7 @@ class _EditOxfordHandoutsState extends State<EditCambridgeHandouts> {
                         color: ColorManager.primary,
                         onPressed: (){
                           cubit.updateCambridgeCoursesWithoutUrl(
+                              type: widget.type,
                               title: controller.text,
                               uId: widget.uId,
                               url: widget.url,

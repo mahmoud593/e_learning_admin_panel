@@ -123,6 +123,7 @@ class _EditOxfordHandoutsState extends State<EditOxfordHandouts> {
                           color: ColorManager.primary,
                           onPressed: (){
                             cubit.updateOxfordCoursesWithoutUrl(
+                                type: widget.type,
                                 title: controller.text,
                                 uId: widget.uId,
                                 url: widget.url,

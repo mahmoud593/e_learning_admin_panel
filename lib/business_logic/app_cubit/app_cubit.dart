@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart';
 import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/oxford_course/speaking/oxford_speaking_tabs/oxford_video_screen/comment_model.dart';
 import 'package:e_learning_dathboard/admin_screens/reviews/model/review_model.dart';
 import 'package:e_learning_dathboard/business_logic/app_cubit/app_states.dart';
@@ -15,6 +16,7 @@ import 'package:e_learning_dathboard/data/models/user_model.dart';
 import 'package:e_learning_dathboard/widgets/custom_toast.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -80,22 +82,21 @@ class AppCubit extends Cubit<AppStates> {
     });
   }
 
-  PlacementModel ?placementModel ;
+  List<PlacementModel> placementTests = [];
 
   Future<void> getPlacementTests({
     required String courseName,
+    required String type,
 }) async {
     emit(GetPlacementTestsLoadingState());
     officialStudents = [];
     notVerifiedStudents = [];
-    await FirebaseFirestore.instance
-        .collection('placementTest')
-        .doc(courseName)
-        .collection('data')
+    placementTests = [];
+    await  FirebaseFirestore.instance.collection('placementTest').doc(courseName).collection(type)
         .get()
         .then((value) {
       value.docs.forEach((element) {
-        placementModel = PlacementModel.fromMap(element.data());
+        placementTests.add(PlacementModel.fromMap(element.data()));
       });
       print('get Placement Success');
       emit(GetPlacementTestsSuccessState());
@@ -144,6 +145,63 @@ class AppCubit extends Cubit<AppStates> {
     });
   }
 
+  Future<void> verifiyOxfordUser({
+    required String userId,
+    required bool value,
+  }) async {
+    emit(DeleteUserLoadingState());
+    FirebaseFirestore.instance.collection('users')
+        .doc(userId)
+        .update({
+      'isVerifyOxford':value
+    }).then((value) {
+      getAllOfficialStudents();
+      emit(DeleteUserSuccessState());
+      debugPrint('student Verifiy Success');
+    }).catchError((error) {
+      debugPrint('Error in Verifiy student is ${error.toString()}');
+      emit(DeleteUserErrorState());
+    });
+  }
+
+
+  Future<void> verifiyIeltsUser({
+    required String userId,
+    required bool value,
+  }) async {
+    emit(DeleteUserLoadingState());
+    FirebaseFirestore.instance.collection('users')
+        .doc(userId)
+        .update({
+      'isVerifyIlets':value
+    }).then((value) {
+      getAllOfficialStudents();
+      emit(DeleteUserSuccessState());
+      debugPrint('student Verifiy Success');
+    }).catchError((error) {
+      debugPrint('Error in Verifiy student is ${error.toString()}');
+      emit(DeleteUserErrorState());
+    });
+  }
+
+  Future<void> verifiyCambridgeUser({
+    required String userId,
+    required bool value,
+  }) async {
+    emit(DeleteUserLoadingState());
+    FirebaseFirestore.instance.collection('users')
+        .doc(userId)
+        .update({
+      'isVerifyCambridge':value
+    }).then((value) {
+      getAllOfficialStudents();
+      emit(DeleteUserSuccessState());
+      debugPrint('student Verifiy Success');
+    }).catchError((error) {
+      debugPrint('Error in Verifiy student is ${error.toString()}');
+      emit(DeleteUserErrorState());
+    });
+  }
 
 
   String url= "";
@@ -181,6 +239,7 @@ class AppCubit extends Cubit<AppStates> {
 
       MaterialModel materialModel=MaterialModel(
           title: title,
+          date: DateTime.now().toIso8601String(),
           url: url,
           uId: ''
       );
@@ -238,6 +297,7 @@ class AppCubit extends Cubit<AppStates> {
       .doc(uId).update({
         'title':title,
         'url':url,
+        'date': DateTime.now().toIso8601String(),
         'uId':uId
       }).then((value) {
         print('Update Success');
@@ -253,7 +313,145 @@ class AppCubit extends Cubit<AppStates> {
     }catch(e){
       emit(UpdateFreeNotesErrorState());
     }
+
   }
+
+  Future updatePlacmentText({
+    required String title,
+    required String type,
+    required String uId,
+    int index=0,
+    required String section,
+  })async{
+    emit(UpdatePlacementTestLoadingState());
+    print('start upload');
+    FilePickerResult? result=await FilePicker.platform.pickFiles();
+    try{
+      File pick= File(result!.files.single.path.toString());
+      var file =pick.readAsBytesSync();
+      String name =DateTime.now().millisecondsSinceEpoch.toString();
+
+      // upload to firebase
+      var pdfFile =  FirebaseStorage.instance.ref().child('test')
+          .child('Section')
+          .child('Pdf')
+          .child(title)
+          .child('$name.pdf');
+
+      UploadTask task= pdfFile.putData(file);
+      TaskSnapshot snapshot=await task;
+      url = await snapshot.ref.getDownloadURL();
+
+      print(url);
+
+
+      await FirebaseFirestore.instance.collection('placementTest').doc(section).collection(type)
+        .doc(uId)
+          .update({
+        'title': title,
+        'link': url,
+        'uId': uId
+      }).then((value) {
+
+        getPlacementTests(courseName: section,type: type);
+        emit(UpdatePlacementTestSuccessState());
+      }).catchError((error){
+        debugPrint('Error in upload pdf is ${error.toString()}');
+        emit(UpdatePlacementTestErrorState());
+      });
+    }catch(e){
+      emit(UpdatePlacementTestErrorState());
+    }
+  }
+
+  Future updatePlacementTestWithoutUrl({
+    required String title,
+    required String type,
+    required String uId,
+    required String url,
+    int index=0,
+    required String section,
+  })async{
+    emit(UpdatePlacementTestLoadingState());
+    try{
+
+      await FirebaseFirestore.instance.collection('placementTest').doc(section).collection(type)
+          .doc(uId).update({
+        'title':title,
+        'link':url,
+        'uId':uId
+      }).then((value) {
+        print('Update Success');
+
+        getPlacementTests(courseName: section,type: type);
+        emit(UpdatePlacementTestSuccessState());
+      }).catchError((error){
+        debugPrint('Error in update placementTest is ${error.toString()}');
+        emit(UpdatePlacementTestErrorState());
+      });
+    }catch(e){
+      emit(UpdatePlacementTestErrorState());
+    }
+  }
+
+
+
+  Future uploadPlacmentText({
+    required String title,
+    required String type,
+    int index=0,
+    required String section,
+  })async{
+    isUpload=true;
+    emit(UploadPDFLoadingState());
+    print('start upload');
+    FilePickerResult? result=await FilePicker.platform.pickFiles();
+    try{
+      File pick= File(result!.files.single.path.toString());
+      var file =pick.readAsBytesSync();
+      isUpload=false;
+      String name =DateTime.now().millisecondsSinceEpoch.toString();
+
+      // upload to firebase
+      var pdfFile =  FirebaseStorage.instance.ref().child('test')
+          .child('Section')
+          .child('Pdf')
+          .child(title)
+          .child('$name.pdf');
+
+      UploadTask task= pdfFile.putData(file);
+      TaskSnapshot snapshot=await task;
+      url = await snapshot.ref.getDownloadURL();
+
+      print(url);
+
+
+      await FirebaseFirestore.instance.collection('placementTest').doc(section).collection(type)
+          .add({
+        'title': title,
+        'link': url,
+        'date': DateTime.now().toIso8601String(),
+        'uId': ''
+      }).then((value) {
+        print('Upload Success');
+        FirebaseFirestore.instance.collection('placementTest').doc(section).collection(type).doc(value.id).update({
+          'uId':value.id
+        });
+
+        getPlacementTests(courseName: section,type: type);
+        isUpload=true;
+        emit(UploadPDFSuccessState());
+      }).catchError((error){
+        debugPrint('Error in upload pdf is ${error.toString()}');
+        isUpload=true;
+        emit(UploadPDFErrorState());
+      });
+    }catch(e){
+      emit(UploadPDFErrorState());
+    }
+  }
+
+
 
   Future updatePdfWithoutUrl({
     required String title,
@@ -401,7 +599,7 @@ class AppCubit extends Cubit<AppStates> {
     required String title,
     int index=0,
     required String section,
-    String type=''
+    required String type,
   })async{
     isUpload=true;
     emit(UploadOxfordCoursesLoadingState());
@@ -430,6 +628,7 @@ class AppCubit extends Cubit<AppStates> {
       MaterialModel materialModel=MaterialModel(
           title: title,
           url: url,
+          date: DateTime.now().toIso8601String(),
           uId: ''
       );
 
@@ -442,7 +641,7 @@ class AppCubit extends Cubit<AppStates> {
               .doc(type).collection('data').doc(value.id).update({
             'uId':value.id
           });
-          getOxfordCourses(section: section);
+          getOxfordCourses(section: section,type: type);
           isUpload=true;
           emit(UploadOxfordCoursesSuccessState());
         }).catchError((error){
@@ -481,6 +680,7 @@ class AppCubit extends Cubit<AppStates> {
     required String uId,
   })async{
     isUpload=true;
+    print('section is $section');
     emit(UpdateOxfordCoursesLoadingState());
     FilePickerResult? result=await FilePicker.platform.pickFiles();
     try{
@@ -502,6 +702,7 @@ class AppCubit extends Cubit<AppStates> {
 
       MaterialModel materialModel=MaterialModel(
           title: title,
+          date: DateTime.now().toIso8601String(),
           url: url,
           uId: uId
       );
@@ -509,6 +710,7 @@ class AppCubit extends Cubit<AppStates> {
       print('section is $section');
       print('type is $type');
       if(section=='mockExams'){
+        print('here1');
 
         await FirebaseFirestore.instance.collection('coursesMaterial').doc('oxford').
         collection(section).doc(type).collection('data')
@@ -523,7 +725,7 @@ class AppCubit extends Cubit<AppStates> {
           emit(UpdateOxfordCoursesErrorState());
         });
       }else{
-
+        print('here2');
         await FirebaseFirestore.instance.collection('coursesMaterial').doc('oxford').collection(section)
             .doc(uId)
             .update(materialModel.toMap()).then((value) {
@@ -546,6 +748,7 @@ class AppCubit extends Cubit<AppStates> {
     required String title,
     int index=0,
     required String section,
+    required String type,
     required String uId,
     required String url,
   })async{
@@ -557,20 +760,38 @@ class AppCubit extends Cubit<AppStates> {
       MaterialModel materialModel=MaterialModel(
           title: title,
           url: url,
+          date: DateTime.now().toIso8601String(),
           uId: uId
       );
 
-      await FirebaseFirestore.instance.collection('coursesMaterial').doc('oxford').collection(section)
-          .doc(uId)
-          .update(materialModel.toMap()).then((value) {
-        getOxfordCourses(section: section);
-        isUpload=true;
-        emit(UpdateOxfordCoursesSuccessState());
-      }).catchError((error){
-        debugPrint('Error in Oxford Courses is ${error.toString()}');
-        isUpload=true;
-        emit(UpdateOxfordCoursesErrorState());
-      });
+      if(section=='mockExams'){
+        await FirebaseFirestore.instance.collection('coursesMaterial').doc('oxford').
+        collection(section).doc(type).collection('data')
+            .doc(uId)
+            .update(materialModel.toMap()).then((value) {
+          getOxfordCourses(section: section,type: type);
+          isUpload=true;
+          emit(UpdateOxfordCoursesSuccessState());
+        }).catchError((error){
+          debugPrint('Error in Oxford Courses is ${error.toString()}');
+          isUpload=true;
+          emit(UpdateOxfordCoursesErrorState());
+        });
+      }else{
+        await FirebaseFirestore.instance.collection('coursesMaterial').doc('oxford').collection(section)
+            .doc(uId)
+            .update(materialModel.toMap()).then((value) {
+          getOxfordCourses(section: section);
+          isUpload=true;
+          emit(UpdateOxfordCoursesSuccessState());
+        }).catchError((error){
+          debugPrint('Error in Oxford Courses is ${error.toString()}');
+          isUpload=true;
+          emit(UpdateOxfordCoursesErrorState());
+        });
+      }
+
+
     }catch(e){
       emit(UpdateOxfordCoursesErrorState());
     }
@@ -729,6 +950,7 @@ class AppCubit extends Cubit<AppStates> {
 
       MaterialModel materialModel=MaterialModel(
           title: title,
+          date: DateTime.now().toIso8601String(),
           url: url,
           uId: ''
       );
@@ -788,6 +1010,7 @@ class AppCubit extends Cubit<AppStates> {
       MaterialModel materialModel=MaterialModel(
           title: title,
           url: url,
+          date: DateTime.now().toIso8601String(),
           uId: uId
       );
 
@@ -823,6 +1046,7 @@ class AppCubit extends Cubit<AppStates> {
       MaterialModel materialModel=MaterialModel(
           title: title,
           url: url,
+          date: DateTime.now().toIso8601String(),
           uId: uId
       );
 
@@ -876,6 +1100,7 @@ class AppCubit extends Cubit<AppStates> {
       MaterialModel materialModel=MaterialModel(
           title: title,
           url: url,
+          date: DateTime.now().toIso8601String(),
           uId: ''
       );
 
@@ -953,6 +1178,7 @@ class AppCubit extends Cubit<AppStates> {
       MaterialModel materialModel=MaterialModel(
           title: title,
           url: url,
+          date: DateTime.now().toIso8601String(),
           uId: uId
       );
 
@@ -988,6 +1214,7 @@ class AppCubit extends Cubit<AppStates> {
       MaterialModel materialModel=MaterialModel(
           title: title,
           url: url,
+          date: DateTime.now().toIso8601String(),
           uId: uId
       );
 
@@ -1061,6 +1288,7 @@ class AppCubit extends Cubit<AppStates> {
       MaterialModel materialModel=MaterialModel(
           title: title,
           url: url,
+          date: DateTime.now().toIso8601String(),
           uId: uId
       );
 
@@ -1095,6 +1323,7 @@ class AppCubit extends Cubit<AppStates> {
       MaterialModel materialModel=MaterialModel(
           title: title,
           url: url,
+          date: DateTime.now().toIso8601String(),
           uId: uId
       );
 
@@ -1188,6 +1417,7 @@ class AppCubit extends Cubit<AppStates> {
       MaterialModel materialModel=MaterialModel(
           title: title,
           url: url,
+          date: DateTime.now().toIso8601String(),
           uId: ''
       );
 
@@ -1220,6 +1450,7 @@ class AppCubit extends Cubit<AppStates> {
     required String title,
     int index=0,
     required String section,
+    required String type,
   })async{
     isUpload=true;
     emit(UploadCambridgeCoursesLoadingState());
@@ -1248,23 +1479,47 @@ class AppCubit extends Cubit<AppStates> {
       MaterialModel materialModel=MaterialModel(
           title: title,
           url: url,
+          date: DateTime.now().toIso8601String(),
           uId: ''
       );
 
-      await FirebaseFirestore.instance.collection('coursesMaterial').doc('cambridge').collection(section)
-          .add(materialModel.toMap()).then((value) {
-        print('Upload Success');
-        FirebaseFirestore.instance.collection('coursesMaterial').doc('cambridge').collection(section).doc(value.id).update({
-          'uId':value.id
+      if(section=='mockExams'){
+        print('here1');
+
+        await FirebaseFirestore.instance.collection('coursesMaterial').doc('cambridge').
+        collection(section).doc(type).collection('data')
+            .add(materialModel.toMap()).then((value) {
+          print('Upload Success');
+          FirebaseFirestore.instance.collection('coursesMaterial').doc('cambridge').
+          collection(section).doc(type).collection('data').doc(value.id).update({
+            'uId':value.id
+          });
+          getCambridgeCourses(section: section);
+          isUpload=true;
+          emit(UploadCambridgeCoursesSuccessState());
+        }).catchError((error){
+          debugPrint('Error in Oxford Courses is ${error.toString()}');
+          isUpload=true;
+          emit(UploadCambridgeCoursesErrorState());
         });
-        getCambridgeCourses(section: section);
-        isUpload=true;
-        emit(UploadCambridgeCoursesSuccessState());
-      }).catchError((error){
-        debugPrint('Error in Cambridge Courses is ${error.toString()}');
-        isUpload=true;
-        emit(UploadCambridgeCoursesErrorState());
-      });
+      }else{
+        await FirebaseFirestore.instance.collection('coursesMaterial').doc('cambridge').collection(section)
+            .add(materialModel.toMap()).then((value) {
+          print('Upload Success');
+          FirebaseFirestore.instance.collection('coursesMaterial').doc('cambridge').collection(section).doc(value.id).update({
+            'uId':value.id
+          });
+          getCambridgeCourses(section: section);
+          isUpload=true;
+          emit(UploadCambridgeCoursesSuccessState());
+        }).catchError((error){
+          debugPrint('Error in Cambridge Courses is ${error.toString()}');
+          isUpload=true;
+          emit(UploadCambridgeCoursesErrorState());
+        });
+      }
+
+
     }catch(e){
       emit(UploadCambridgeCoursesErrorState());
     }
@@ -1274,6 +1529,7 @@ class AppCubit extends Cubit<AppStates> {
     required String title,
     int index=0,
     required String section,
+    required String type,
     required String uId,
   })async{
     isUpload=true;
@@ -1299,20 +1555,40 @@ class AppCubit extends Cubit<AppStates> {
       MaterialModel materialModel=MaterialModel(
           title: title,
           url: url,
+          date: DateTime.now().toIso8601String(),
           uId: uId
       );
 
-      await FirebaseFirestore.instance.collection('coursesMaterial').doc('cambridge').collection(section)
-          .doc(uId)
-          .update(materialModel.toMap()).then((value) {
-        getCambridgeCourses(section: section);
-        isUpload=true;
-        emit(UpdateCambridgeCoursesSuccessState());
-      }).catchError((error){
-        debugPrint('Error in cambridge Courses is ${error.toString()}');
-        isUpload=true;
-        emit(UpdateCambridgeCoursesErrorState());
-      });
+      if(section=='mockExams'){
+        print('here1');
+
+        await FirebaseFirestore.instance.collection('coursesMaterial').doc('cambridge').
+        collection(section).doc(type).collection('data')
+            .doc(uId)
+            .update(materialModel.toMap()).then((value) {
+          getCambridgeCourses(section: section,type: type);
+          isUpload=true;
+          emit(UpdateCambridgeCoursesSuccessState());
+        }).catchError((error){
+          debugPrint('Error in Oxford Courses is ${error.toString()}');
+          isUpload=true;
+          emit(UpdateCambridgeCoursesErrorState());
+        });
+      }else{
+        await FirebaseFirestore.instance.collection('coursesMaterial').doc('cambridge').collection(section)
+            .doc(uId)
+            .update(materialModel.toMap()).then((value) {
+          getCambridgeCourses(section: section);
+          isUpload=true;
+          emit(UpdateCambridgeCoursesSuccessState());
+        }).catchError((error){
+          debugPrint('Error in cambridge Courses is ${error.toString()}');
+          isUpload=true;
+          emit(UpdateCambridgeCoursesErrorState());
+        });
+      }
+
+
     }catch(e){
       emit(UpdateCambridgeCoursesErrorState());
     }
@@ -1322,6 +1598,7 @@ class AppCubit extends Cubit<AppStates> {
     required String title,
     int index=0,
     required String section,
+    required String type,
     required String uId,
     required String url,
   })async{
@@ -1331,20 +1608,41 @@ class AppCubit extends Cubit<AppStates> {
       MaterialModel materialModel=MaterialModel(
           title: title,
           url: url,
+          date: DateTime.now().toIso8601String(),
           uId: uId
       );
 
-      await FirebaseFirestore.instance.collection('coursesMaterial').doc('cambridge').collection(section)
-          .doc(uId)
-          .update(materialModel.toMap()).then((value) {
-        getCambridgeCourses(section: section);
-        isUpload=true;
-        emit(UpdateCambridgeCoursesSuccessState());
-      }).catchError((error){
-        debugPrint('Error in cambridge Courses is ${error.toString()}');
-        isUpload=true;
-        emit(UpdateCambridgeCoursesErrorState());
-      });
+
+      if(section=='mockExams'){
+        print('here1');
+
+        await FirebaseFirestore.instance.collection('coursesMaterial').doc('cambridge').
+        collection(section).doc(type).collection('data')
+            .doc(uId)
+            .update(materialModel.toMap()).then((value) {
+          getCambridgeCourses(section: section,type: type);
+          isUpload=true;
+          emit(UpdateCambridgeCoursesSuccessState());
+        }).catchError((error){
+          debugPrint('Error in Oxford Courses is ${error.toString()}');
+          isUpload=true;
+          emit(UpdateCambridgeCoursesErrorState());
+        });
+      }else{
+        await FirebaseFirestore.instance.collection('coursesMaterial').doc('cambridge').collection(section)
+            .doc(uId)
+            .update(materialModel.toMap()).then((value) {
+          getCambridgeCourses(section: section);
+          isUpload=true;
+          emit(UpdateCambridgeCoursesSuccessState());
+        }).catchError((error){
+          debugPrint('Error in cambridge Courses is ${error.toString()}');
+          isUpload=true;
+          emit(UpdateCambridgeCoursesErrorState());
+        });
+      }
+
+
     }catch(e){
       emit(UpdateCambridgeCoursesErrorState());
     }
@@ -1354,20 +1652,38 @@ class AppCubit extends Cubit<AppStates> {
 
   Future<void> deleteCambridgeCourses({
     required String section,
+    required String type,
     required String uId,
   })async{
     emit(DeleteCambridgeCoursesLoadingState());
-    await FirebaseFirestore.instance.collection('coursesMaterial').doc('cambridge').collection(section)
-        .doc(uId).delete().then((value) {
-      print('delete Success');
-      getCambridgeCourses(section: section);
-      isUpload=true;
-      emit(DeleteCambridgeCoursesSuccessState());
-    }).catchError((error){
-      debugPrint('Error in cambridge Courses is ${error.toString()}');
-      isUpload=true;
-      emit(DeleteCambridgeCoursesErrorState());
-    });
+
+    if(section=='mockExams'){
+      print('here1');
+
+      await FirebaseFirestore.instance.collection('coursesMaterial').doc('cambridge').
+      collection(section).doc(type).collection('data')
+          .doc(uId).delete().then((value) {
+        getCambridgeCourses(section: section,type: type);
+        isUpload=true;
+        emit(DeleteCambridgeCoursesSuccessState());
+      }).catchError((error){
+        debugPrint('Error in Oxford Courses is ${error.toString()}');
+        isUpload=true;
+        emit(UpdateOxfordCoursesErrorState());
+      });
+    }else{
+      await FirebaseFirestore.instance.collection('coursesMaterial').doc('cambridge').collection(section)
+          .doc(uId).delete().then((value) {
+        print('delete Success');
+        getCambridgeCourses(section: section);
+        isUpload=true;
+        emit(DeleteCambridgeCoursesSuccessState());
+      }).catchError((error){
+        debugPrint('Error in cambridge Courses is ${error.toString()}');
+        isUpload=true;
+        emit(DeleteCambridgeCoursesErrorState());
+      });
+    }
   }
 
 
@@ -1376,20 +1692,40 @@ class AppCubit extends Cubit<AppStates> {
 
   Future<void> getCambridgeCourses({
     required String section,
+     String type='',
   })async{
     cambridgeCoursesList=[];
     emit(GetOxfordCoursesLoadingState());
-    await FirebaseFirestore.instance.collection('coursesMaterial')
-        .doc('cambridge').collection(section).get().then((value) {
 
-      cambridgeCoursesList=value.docs.map((e) => MaterialModel.fromMap(e.data())).toList();
+    if(section=='mockExams'){
+      print('here1');
 
-      print('get Courses Success');
-      emit(GetCambridgeCoursesSuccessState());
-    }).catchError((error) {
-      debugPrint('Error in Get Cambridge Courses is ${error.toString()}');
-      emit(GetCambridgeCoursesErrorState());
-    });
+      await FirebaseFirestore.instance.collection('coursesMaterial').doc('cambridge').
+      collection(section).doc(type).collection('data')
+          .get().then((value) {
+        cambridgeCoursesList=value.docs.map((e) => MaterialModel.fromMap(e.data())).toList();
+
+        emit(GetCambridgeCoursesSuccessState());
+      }).catchError((error){
+        debugPrint('Error in Oxford Courses is ${error.toString()}');
+        emit(GetCambridgeCoursesErrorState());
+      });
+    }else{
+
+      await FirebaseFirestore.instance.collection('coursesMaterial')
+          .doc('cambridge').collection(section).get().then((value) {
+
+        cambridgeCoursesList=value.docs.map((e) => MaterialModel.fromMap(e.data())).toList();
+
+        print('get Courses Success');
+        emit(GetCambridgeCoursesSuccessState());
+      }).catchError((error) {
+        debugPrint('Error in Get Cambridge Courses is ${error.toString()}');
+        emit(GetCambridgeCoursesErrorState());
+      });
+    }
+
+
 
   }
 
@@ -1469,6 +1805,7 @@ class AppCubit extends Cubit<AppStates> {
       MaterialModel materialModel=MaterialModel(
           title: title,
           url: url,
+          date: DateTime.now().toIso8601String(),
           uId: uId
       );
 
@@ -1503,6 +1840,7 @@ class AppCubit extends Cubit<AppStates> {
 
       MaterialModel materialModel=MaterialModel(
           title: title,
+          date: DateTime.now().toIso8601String(),
           url: url,
           uId: uId
       );
@@ -1559,6 +1897,7 @@ class AppCubit extends Cubit<AppStates> {
 
       MaterialModel materialModel=MaterialModel(
           title: title,
+          date: DateTime.now().toIso8601String(),
           url: url,
           uId: ''
       );
@@ -1667,10 +2006,12 @@ class AppCubit extends Cubit<AppStates> {
     try{
       var response =await FirebaseFirestore.instance.collection('reviews').get();
       response.docs.forEach((element) {
-        reviews.add(ReviewModel.fromMap(element.data()));
+        reviews.add(ReviewModel.fromJson(element.data()));
       });
+      print('reviews length ${reviews.length}');
       emit(GetCertificateSuccessState());
     }catch (e){
+      print('get reviews error ${e.toString()}');
       emit(GetCertificateErrorState());
     }
   }
@@ -1778,12 +2119,14 @@ class AppCubit extends Cubit<AppStates> {
     required String endTime,
     required String startDate,
     required String startTime,
+    required String courseTime,
     required bool status,
   })async{
     emit(UploadGroupsLoadingState());
     GroupModel groupModel=GroupModel(
         count: count,
         endDate: endDate,
+        courseTime: courseTime,
         coursePrice: coursePrice,
         endTime: endTime,
         courseName: courseName,
@@ -1830,12 +2173,14 @@ class AppCubit extends Cubit<AppStates> {
     required String payType,
     required String startTime,
     required String uId,
+    required String courseTime,
     required bool status,
   })async{
     emit(UpdateGroupsLoadingState());
     GroupModel groupModel=GroupModel(
         count: count,
         endDate: endDate,
+        courseTime: courseTime,
         endTime: endTime,
         coursePrice: coursePrice,
         courseName: courseName,
@@ -2016,6 +2361,7 @@ class AppCubit extends Cubit<AppStates> {
 
         MaterialModel materialModel=MaterialModel(
             title: title,
+            date: DateTime.now().toIso8601String(),
             url: downloadUrl,
             uId: ''
         );
@@ -2332,6 +2678,7 @@ class AppCubit extends Cubit<AppStates> {
 
         MaterialModel materialModel=MaterialModel(
             title: title,
+            date: DateTime.now().toIso8601String(),
             url: downloadUrl,
             uId: ''
         );
@@ -2444,6 +2791,7 @@ class AppCubit extends Cubit<AppStates> {
         MaterialModel materialModel=MaterialModel(
             title: title,
             url: downloadUrl,
+            date: DateTime.now().toIso8601String(),
             uId: ''
         );
 
@@ -2514,6 +2862,246 @@ class AppCubit extends Cubit<AppStates> {
       emit(DeleteIeltsSpeakingErrorState());
     });
 
+  }
+
+  Future<void> updateReview({
+    required String reviewId,
+    String? newReviewText,
+    String? newImageUrl,
+    String? newVideoUrl,
+    bool removeImage = false,
+    bool removeVideo = false,
+  }) async {
+    emit(GetCertificateLoadingState());
+
+    try {
+      Map<String, dynamic> updateData = {
+        'updatedAt': DateTime.now().millisecondsSinceEpoch,
+      };
+
+      // تحديث النص إذا تم تمريره
+      if (newReviewText != null) {
+        updateData['review'] = newReviewText;
+      }
+
+      // تحديث الصورة
+      if (newImageUrl != null) {
+        updateData['reviewImage'] = newImageUrl;
+        updateData['reviewVideo'] = null; // إزالة الفيديو عند إضافة صورة
+      } else if (removeImage) {
+        updateData['reviewImage'] = null;
+      }
+
+      // تحديث الفيديو
+      if (newVideoUrl != null) {
+        updateData['reviewVideo'] = newVideoUrl;
+        updateData['reviewImage'] = null; // إزالة الصورة عند إضافة فيديو
+      } else if (removeVideo) {
+        updateData['reviewVideo'] = null;
+      }
+
+      await FirebaseFirestore.instance
+          .collection('reviews')
+          .doc(reviewId)
+          .update(updateData);
+
+      // تحديث القائمة المحلية
+      int index = reviews.indexWhere((review) => review.id == reviewId);
+      if (index != -1) {
+        String updatedText = newReviewText ?? reviews[index].review ?? '';
+        String? updatedImage = removeImage ? null : (newImageUrl ?? reviews[index].reviewImage);
+        String? updatedVideo = removeVideo ? null : (newVideoUrl ?? reviews[index].reviewVideo);
+
+        // إزالة الصورة إذا تم إضافة فيديو والعكس
+        if (newVideoUrl != null) updatedImage = null;
+        if (newImageUrl != null) updatedVideo = null;
+
+        reviews[index] = reviews[index].copyWith(
+          review: updatedText,
+          reviewImage: updatedImage,
+          reviewVideo: updatedVideo,
+        );
+      }
+
+      getReviews();
+
+      emit(GetCertificateSuccessState());
+    } catch (error) {
+      print('Error updating review: $error');
+      emit(UpdateReviewErrorState(error.toString()));
+    }
+  }
+
+// دالة رفع صورة جديدة للمراجعة
+  Future<String?> uploadReviewImage(File imageFile, String reviewId) async {
+    try {
+      String fileName = 'review_images/$reviewId/${DateTime.now().millisecondsSinceEpoch}.jpg';
+
+      TaskSnapshot snapshot = await FirebaseStorage.instance
+          .ref()
+          .child(fileName)
+          .putFile(imageFile);
+
+      String downloadUrl = await snapshot.ref.getDownloadURL();
+      return downloadUrl;
+    } catch (error) {
+      print('Error uploading review image: $error');
+      return null;
+    }
+  }
+
+// دالة رفع فيديو جديد للمراجعة
+  Future<String?> uploadReviewVideo(File videoFile, String reviewId) async {
+    try {
+      String fileName = 'review_videos/$reviewId/${DateTime.now().millisecondsSinceEpoch}.mp4';
+
+      TaskSnapshot snapshot = await FirebaseStorage.instance
+          .ref()
+          .child(fileName)
+          .putFile(videoFile);
+
+      String downloadUrl = await snapshot.ref.getDownloadURL();
+      return downloadUrl;
+    } catch (error) {
+      print('Error uploading review video: $error');
+      return null;
+    }
+  }
+
+  String fcmToken='';
+  Future<void> getToken() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    // Request permission (iOS)
+    await messaging.requestPermission();
+
+    // Get the token
+    String? token = await messaging.getToken();
+    fcmToken = token!;
+    print("FCM Token: $fcmToken");
+    emit(GetCertificateSuccessState());
+
+    print("FCM Token: $token");
+  }
+
+  Future<void> sendNotification({
+    required String title,
+    required String uId,
+    required String body,
+    required String token,
+}) async {
+    emit(AddNotificationLoadingState());
+    final dio = Dio();
+
+    final data = {
+      "token": token,
+      "title": title,
+      "body": body
+    };
+
+    try {
+      final response = await dio.post(
+        "https://souqna.pro/api/notification/ktop",
+        data: data,
+        options: Options(
+          headers: {
+            "Authorization":
+            "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpYXQiOjE3NTUxNjA5MDYsImV4cCI6MTc1Njg4ODkwNn0.aETAIfvaA6Ou0AmpO275wbpAbIdJ13cte2WOtq3G57mBOCScPxWS5_7IJO9oGSeNzrwRoa5NqIxGIIjzW5xgjA",
+            "Content-Type": "application/json",
+          },
+        ),
+      );
+
+      print("✅ Notification sent successfully: ${response.data}");
+
+      FirebaseFirestore.instance.collection('notifications').add({
+        'title': title,
+        'body': body,
+        'uId': uId,
+        'notificationId': '',
+        'timestamp': DateTime
+            .now()
+            .millisecondsSinceEpoch,
+      }).then((value) {
+        FirebaseFirestore.instance.collection('notifications')
+            .doc(value.id)
+            .update({
+          'notificationId': value.id,
+        });
+
+        print("Notification saved to Firestore with ID: ${value.id}");
+      }).catchError((error) {
+        print("Error saving notification to Firestore: $error");
+      });
+
+      emit(AddNotificationSuccessState());
+    } catch (e) {
+      print("❌ Error sending notification: $e");
+      emit(AddNotificationErrorState());
+    }
+  }
+
+  Future<void> addReview({
+    required String userId,
+    required String userName,
+    String? reviewText,
+    String? imageUrl,
+    String? videoUrl,
+  }) async {
+    emit(AddReviewLoadingState());
+
+    try {
+      Map<String, dynamic> reviewData = {
+        'userId': userId,
+        'userName': userName,
+        'review': reviewText ?? '',
+        'reviewImage': imageUrl,
+        'userImage':'',
+        'reviewVideo': videoUrl,
+        'uId':'',
+        'mediaType': imageUrl != null && imageUrl.isNotEmpty
+            ? 'image'
+            : videoUrl != null && videoUrl.isNotEmpty
+                ? 'video'
+                : 'text',
+        'date':DateTime.now().toIso8601String(),
+      };
+
+      await FirebaseFirestore.instance.collection('reviews').add(reviewData).then((value) {
+        FirebaseFirestore.instance.collection('reviews').doc(value.id).update({
+          'uId': value.id,
+        });
+      });
+
+      getReviews();
+
+      emit(AddReviewSuccessState());
+    } catch (error) {
+      print('Error adding review: $error');
+      emit(AddReviewErrorState());
+    }
+  }
+
+  Future deletePlacementTest({
+    required String type,
+    required String courseName,
+    required String uId,
+  })async{
+    emit(DeletePlacementTestLoadingState());
+    try{
+
+      await FirebaseFirestore.instance.collection('placementTest').doc(courseName).collection(type)
+          .doc(uId).delete().then((value) {
+
+        getPlacementTests(type: type,courseName: courseName);
+        emit(DeletePlacementTestSuccessState());
+      }).catchError((error){
+        debugPrint('Error in delete pdf is ${error.toString()}');
+        emit(DeletePlacementTestErrorState());
+      });
+    }catch(e){
+      emit(DeletePlacementTestErrorState());
+    }
   }
 
 

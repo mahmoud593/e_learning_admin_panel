@@ -16,6 +16,7 @@ class EditGroupInfo extends StatefulWidget {
     required this.startDate,required this.endDate,
     required this.startTime,required this.endTime,
     required this.status,required this.type,
+    required this.classesPerWeek,
     required this.coursePrice,required this.payType
   });
   final String section;
@@ -29,6 +30,7 @@ class EditGroupInfo extends StatefulWidget {
   final String endDate;
   final String startTime;
   final String endTime;
+  final String classesPerWeek;
   final bool status;
 
   @override
@@ -42,6 +44,7 @@ class _EditGroupInfoState extends State<EditGroupInfo> {
   TextEditingController statusController = TextEditingController();
 
   TextEditingController courseNameController = TextEditingController();
+  TextEditingController courseTimeController = TextEditingController();
 
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
@@ -50,6 +53,7 @@ class _EditGroupInfoState extends State<EditGroupInfo> {
     super.initState();
     courseNameController.text=widget.courseName;
     countController.text=widget.count;
+    courseTimeController.text=widget.classesPerWeek;
     coursePriceController.text=widget.coursePrice.toString();
     AppCubit.get(context).startDateController.text=widget.startDate;
     AppCubit.get(context).startTimeController.text=widget.startTime;
@@ -292,6 +296,42 @@ class _EditGroupInfoState extends State<EditGroupInfo> {
 
                           SizedBox(height: MediaQuery.sizeOf(context).height*0.02,),
 
+                          Text('Classes per week',style: TextStyle(
+                              color: Colors.black,
+                              fontSize: MediaQuery.sizeOf(context).height*0.025
+                          ),),
+
+                          SizedBox(height: MediaQuery.sizeOf(context).height*0.01,),
+
+                          Row(
+                            children: [
+                              Expanded(
+                                child: DefaultFormField(
+                                  validText: 'Please enter number of classes per week',
+                                  hint: 'Enter number of classes per week',
+                                  controller: courseTimeController,
+                                  textInputType: TextInputType.number,
+                                ),
+                              ),
+                              const SizedBox(width: 8), // مسافة بسيطة بين العنصرين
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[200],
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                child: const Text(
+                                  'Week',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: MediaQuery.sizeOf(context).height*0.02,),
+
                           Row(
                               children: [
                                 Text('Status',style: TextStyle(
@@ -318,6 +358,7 @@ class _EditGroupInfoState extends State<EditGroupInfo> {
                             onPressed: (){
                                 cubit.updateGroups(
                                   payType: widget.payType ,
+                                  courseTime: courseTimeController.text,
                                   section: widget.section,
                                   count: int.parse(countController.text),
                                   courseName: courseNameController.text,

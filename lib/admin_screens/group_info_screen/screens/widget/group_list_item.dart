@@ -71,6 +71,7 @@ class GroupListItem extends StatelessWidget {
                             uId: groupModel.uId.toString(),
                             courseName: groupModel.courseName.toString(),
                             startDate: groupModel.startDate.toString(),
+                            classesPerWeek: groupModel.courseTime.toString(),
                             endDate: groupModel.endDate.toString(),
                             startTime: groupModel.startTime.toString(),
                             endTime: groupModel.endTime.toString(),
@@ -102,6 +103,9 @@ class GroupListItem extends StatelessWidget {
 
               SizedBox(height: MediaQuery.of(context).size.height*.02,),
               rowData(title: 'Count', data: groupModel.count.toString(),context: context),
+
+              SizedBox(height: MediaQuery.of(context).size.height*.02,),
+              rowData(title: 'Classes per week', data: groupModel.courseTime.toString(),context: context),
 
               SizedBox(height: MediaQuery.of(context).size.height*.02,),
               rowData(title: 'Status', data:  groupModel.status.toString(),context: context),

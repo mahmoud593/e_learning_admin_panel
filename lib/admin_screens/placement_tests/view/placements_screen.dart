@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/lelts_course/ielts_course.dart';
 import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/oxford_course/oxford_course.dart';
 import 'package:e_learning_dathboard/admin_screens/placement_tests/view/placement_test_items.dart';
+import 'package:e_learning_dathboard/admin_screens/placement_tests/view/placemnet_test_tabs.dart';
 import 'package:e_learning_dathboard/business_logic/app_cubit/app_cubit.dart';
 import 'package:e_learning_dathboard/constants/constants.dart';
 import 'package:e_learning_dathboard/styles/color_manager.dart';
@@ -55,14 +56,11 @@ class PlacementsScreen extends StatelessWidget {
                   return InkWell(
                     onTap: ()async{
                       if(index == 0){
-                        await AppCubit.get(context).getPlacementTests(courseName: 'oxford');
-                        navigateTo(context,  PlacementTestItems(title: 'Oxford\n Placement Test', section: 'oxford'));
+                        navigateTo(context,  PlacemnetTestTabs(title: 'Oxford\n Placement Test', section: 'oxford'));
                       }else if(index == 1){
-                        await AppCubit.get(context).getPlacementTests(courseName: 'cambridge');
-                        navigateTo(context,  PlacementTestItems(title: 'Cambridge\n Placement Test', section: 'cambridge'));
+                        navigateTo(context,  PlacemnetTestTabs(title: 'Cambridge\n Placement Test', section: 'cambridge'));
                       }else{
-                        await AppCubit.get(context).getPlacementTests(courseName: 'ielts');
-                        navigateTo(context,  PlacementTestItems(title: 'Ielts\n Placement Test', section: 'ielts'));
+                        navigateTo(context,  PlacemnetTestTabs(title: 'Ielts\n Placement Test', section: 'ielts'));
                       }
                     },
                     child: Container(

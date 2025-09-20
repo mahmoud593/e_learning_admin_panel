@@ -3,6 +3,7 @@ import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/books/b
 import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/cambridg_course/handouts/cambridge_handouts_screen.dart';
 import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/cambridg_course/home_work/home_work.dart';
 import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/cambridg_course/mock_exams/cambridge_mock_exams_screen.dart';
+import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/cambridg_course/mock_exams/cambridge_tabs_mock_screen.dart';
 import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/cambridg_course/revision/cambridge_handouts_screen.dart';
 import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/cambridg_course/speaking/oxford_speaking_screen.dart';
 import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/cambridg_course/tracks/cambridge_tracks_screen.dart';
@@ -25,7 +26,7 @@ class CambridgeCourseScreen extends StatelessWidget {
       ()=>customPushNavigator(context, const CambridgeSpeakingScreen()),
       ()=>customPushNavigator(context, const CambridgeTracksScreen()),
       ()=>customPushNavigator(context, const HomeWorkCambridgeScreen()),
-      ()=>customPushNavigator(context, const CambridgeMockExamsScreen(title: 'Mock Exams',)),
+      ()=>customPushNavigator(context, const CambridgeTabsMockScreen()),
       ()=>customPushNavigator(context, const CambridgeRevisionScreen(title: 'Revision',)),
     ];
     return Scaffold(

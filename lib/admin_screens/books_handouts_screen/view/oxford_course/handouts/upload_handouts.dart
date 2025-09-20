@@ -9,8 +9,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 class UploadOxfordHandouts extends StatelessWidget {
-  UploadOxfordHandouts({super.key,required this.section});
+  UploadOxfordHandouts({super.key,required this.section,required this.type});
   final String section;
+  final String type;
 
   TextEditingController controller = TextEditingController();
 
@@ -63,6 +64,7 @@ class UploadOxfordHandouts extends StatelessWidget {
                       GestureDetector(
                         onTap: (){
                           cubit.uploadOxfordCourses(
+                              type: type,
                               title: controller.text,
                               section: section
                           );

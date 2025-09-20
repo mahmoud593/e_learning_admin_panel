@@ -100,8 +100,29 @@ class _TracksScreenState extends State<CambridgeTracksScreen> {
                                       Spacer(),
                                       IconButton(
                                           onPressed:()async{
-                                            await Share.share(' اسمع هذا الملف : ${cubit.cambridgeCoursesList[index].title} \n ${cubit.cambridgeCoursesList[index].url}');
-                                          } ,
+                                            final courseTitle = 'Cambridge Course';
+                                            final lectureName = cubit.cambridgeCoursesList[index].title;
+                                            final bookImageUrl = 'https://img.freepik.com/free-photo/english-books-with-red-background_23-2149440458.jpg?w=360&t=st=1703150045~exp=1703150645~hmac=38549c832725cef0920fc52fc2a15442b0f41c825fb24c92f7c44122af614ddd';
+                                            final courseUrl = cubit.cambridgeCoursesList[index].url;
+
+                                            final message = '''
+📚 *New Learning Opportunity!*
+Course: $courseTitle
+🎓 Lecture: $lectureName
+
+Discover more about this course:
+$courseUrl
+
+📖 Book cover:
+$bookImageUrl
+
+Download the app now and explore all our courses:
+📱 iOS: https://apps.apple.com/eg/app/english-with-dr-mohamed-ismail/id6740339979  
+🤖 Android: https://play.google.com/store/apps/details?id=com.drismail.drismail
+''';
+
+                                            await Share.share(message);
+                                            } ,
                                           icon: Icon(Icons.share,
                                             color: ColorManager.primary,
                                             size: MediaQuery.of(context).size.height*0.03,
@@ -162,6 +183,7 @@ class _TracksScreenState extends State<CambridgeTracksScreen> {
                                       IconButton(
                                           onPressed: (){
                                             cubit.deleteCambridgeCourses(
+                                              type: '',
                                               section: 'tracks',
                                               uId: cubit.cambridgeCoursesList[index].uId,
                                             );

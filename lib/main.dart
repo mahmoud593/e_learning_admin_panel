@@ -34,7 +34,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (BuildContext context) => AppCubit()),
+        BlocProvider(create: (BuildContext context) => AppCubit()..getToken()),
       ],
       child: BlocConsumer<AppCubit,AppStates>(
         listener: (context,state){},

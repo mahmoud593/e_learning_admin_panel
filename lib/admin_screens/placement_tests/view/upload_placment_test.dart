@@ -8,9 +8,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
-class CambridgeUploadTracks extends StatelessWidget {
-  CambridgeUploadTracks({super.key,required this.section});
+class UploadPlacmentTest extends StatelessWidget {
+  UploadPlacmentTest({super.key,required this.section, required this.type});
   final String section;
+  final String type;
 
   TextEditingController controller = TextEditingController();
 
@@ -18,11 +19,11 @@ class CambridgeUploadTracks extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Upload Track'),
+          title: const Text('Upload PDF'),
         ),
         body: BlocConsumer<AppCubit,AppStates>(
           listener: (context, state) {
-            if(state is UploadCambridgeCoursesSuccessState){
+            if(state is UploadPDFSuccessState){
               customToast(title: 'Upload successfully ', color: ColorManager.primary);
               Navigator.pop(context);
             }
@@ -30,14 +31,14 @@ class CambridgeUploadTracks extends StatelessWidget {
           builder: (context, state) {
             var cubit = AppCubit.get(context);
             return  ModalProgressHUD(
-                inAsyncCall: state is UploadCambridgeCoursesLoadingState,
+                inAsyncCall: state is UploadPDFLoadingState,
                 progressIndicator: CircularProgressIndicator(color: ColorManager.white,),
                 child: Container(
                   padding:EdgeInsets.all( MediaQuery.sizeOf(context).height*0.02),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Name of Track',style: TextStyle(
+                      Text('Name of Pdf',style: TextStyle(
                           fontSize:  MediaQuery.sizeOf(context).height*0.023,
                           fontWeight: FontWeight.bold
                       ),),
@@ -45,7 +46,7 @@ class CambridgeUploadTracks extends StatelessWidget {
                       SizedBox( height:  MediaQuery.sizeOf(context).height*0.02,),
 
                       DefaultFormField(
-                          hint: 'Enter name of Track....',
+                          hint: 'Enter name of pdf....',
                           controller: controller,
                           maxLines: 3,
                           textInputType: TextInputType.name
@@ -53,7 +54,7 @@ class CambridgeUploadTracks extends StatelessWidget {
 
                       SizedBox( height:  MediaQuery.sizeOf(context).height*0.02,),
 
-                      Text('Press to upload Track',style: TextStyle(
+                      Text('Press to upload pdf',style: TextStyle(
                           fontSize:  MediaQuery.sizeOf(context).height*0.023,
                           fontWeight: FontWeight.bold
                       ),),
@@ -62,8 +63,8 @@ class CambridgeUploadTracks extends StatelessWidget {
 
                       GestureDetector(
                         onTap: (){
-                          cubit.uploadCambridgeCourses(
-                              type: '',
+                          cubit.uploadPlacmentText(
+                              type: type,
                               title: controller.text,
                               section: section
                           );
@@ -79,7 +80,7 @@ class CambridgeUploadTracks extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
 
-                              Text('Upload Track',style: TextStyle(
+                              Text('Upload PDF',style: TextStyle(
                                   fontSize:  MediaQuery.sizeOf(context).height*0.022,
                                   color:  ColorManager.white
                               )),
@@ -88,9 +89,7 @@ class CambridgeUploadTracks extends StatelessWidget {
 
                               Image(
                                 height:  MediaQuery.sizeOf(context).height*0.08,
-                                image:  AssetImage(
-                                    'assets/images/audio.png'
-                                ),
+                                image:  AssetImage('assets/images/pdf.png'),
                               ),
                             ],
                           ),

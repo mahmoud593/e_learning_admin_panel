@@ -121,6 +121,7 @@ class _EditOxfordHandoutsState extends State<EditOxfordTrack> {
                         onPressed: (){
                           cubit.updateOxfordCoursesWithoutUrl(
                               title: controller.text,
+                              type: '',
                               uId: widget.uId,
                               url: widget.url,
                               section: widget.section

@@ -116,6 +116,10 @@ class GetCertificateSuccessState extends AppStates {}
 class GetCertificateLoadingState extends AppStates {}
 class GetCertificateErrorState extends AppStates {}
 
+class AddReviewSuccessState extends AppStates {}
+class AddReviewLoadingState extends AppStates {}
+class AddReviewErrorState extends AppStates {}
+
 class UploadCertificateSuccessState extends AppStates {}
 class UploadCertificateLoadingState extends AppStates {}
 class UploadCertificateErrorState extends AppStates {}
@@ -170,3 +174,24 @@ class UpdateFreeNotesErrorState extends AppStates {}
 class DeleteFreeNotesSuccessState extends AppStates {}
 class DeleteFreeNotesLoadingState extends AppStates {}
 class DeleteFreeNotesErrorState extends AppStates {}
+
+class UpdateReviewLoadingState extends AppStates {}
+
+class UpdateReviewSuccessState extends AppStates {}
+
+class UpdateReviewErrorState extends AppStates {
+  final String error;
+  UpdateReviewErrorState(this.error);
+}
+
+class AddNotificationSuccessState extends AppStates {}
+class AddNotificationLoadingState extends AppStates {}
+class AddNotificationErrorState extends AppStates {}
+
+class DeletePlacementTestSuccessState extends AppStates {}
+class DeletePlacementTestLoadingState extends AppStates {}
+class DeletePlacementTestErrorState extends AppStates {}
+
+class UpdatePlacementTestSuccessState extends AppStates {}
+class UpdatePlacementTestLoadingState extends AppStates {}
+class UpdatePlacementTestErrorState extends AppStates {}

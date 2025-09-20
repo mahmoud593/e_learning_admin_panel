@@ -65,6 +65,11 @@ dependencies:
   syncfusion_flutter_pdfviewer: ^28.1.38
   share_plus:
   expandable:
+  firebase_messaging:
+  dio:
+  lucide_icons:
+  flutter_native_splash:
+  video_thumbnail:
 
 
   #Firebase

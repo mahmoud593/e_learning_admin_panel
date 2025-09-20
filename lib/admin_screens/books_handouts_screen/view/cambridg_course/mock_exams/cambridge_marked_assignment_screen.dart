@@ -3,6 +3,7 @@ import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/books/b
 import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/cambridg_course/handouts/edit_handouts.dart';
 import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/cambridg_course/handouts/upload_handouts.dart';
 import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/lelts_course/handouts/upload_handouts.dart';
+import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/oxford_course/handouts/edit_handouts.dart';
 import 'package:e_learning_dathboard/admin_screens/books_handouts_screen/view/oxford_course/handouts/upload_handouts.dart';
 import 'package:e_learning_dathboard/admin_screens/open_pdf/open_pdf.dart';
 import 'package:e_learning_dathboard/business_logic/app_cubit/app_cubit.dart';
@@ -15,20 +16,20 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
-class CambridgeMockExamsScreen extends StatefulWidget {
+class CambridgeMarkedAssignmentScreen extends StatefulWidget {
   final String title;
-  const CambridgeMockExamsScreen({super.key,required this.title});
+  const CambridgeMarkedAssignmentScreen({super.key,required this.title});
 
   @override
-  State<CambridgeMockExamsScreen> createState() => _OxfordHandoutsScreenState();
+  State<CambridgeMarkedAssignmentScreen> createState() => _CambridgeHandoutsScreenState();
 }
 
-class _OxfordHandoutsScreenState extends State<CambridgeMockExamsScreen> {
+class _CambridgeHandoutsScreenState extends State<CambridgeMarkedAssignmentScreen> {
 
   @override
   void initState() {
     super.initState();
-    AppCubit.get(context).getCambridgeCourses(section: 'mockExams',type: 'exams');
+    AppCubit.get(context).getCambridgeCourses(section: 'mockExams',type: 'markedAssignments');
   }
 
   @override
@@ -44,7 +45,7 @@ class _OxfordHandoutsScreenState extends State<CambridgeMockExamsScreen> {
           floatingActionButton: FloatingActionButton(
               backgroundColor: Colors.redAccent,
               onPressed: (){
-               customPushNavigator(context, UploadCambridgeHandouts(section: 'mockExams', type: 'exams',));
+                customPushNavigator(context, UploadCambridgeHandouts(section: 'mockExams',type: 'markedAssignments',));
               },
               child: Icon(
                 Icons.upload_file_outlined,
@@ -62,7 +63,7 @@ class _OxfordHandoutsScreenState extends State<CambridgeMockExamsScreen> {
               children: [
                 SizedBox(height: MediaQuery.of(context).size.height*0.01,),
 
-                state is GetCambridgeCoursesLoadingState?
+                state is GetIeltsCoursesLoadingState?
                 const Center(child: CircularProgressIndicator(),):
                 Expanded(
                   child: ListView.separated(
@@ -91,6 +92,7 @@ class _OxfordHandoutsScreenState extends State<CambridgeMockExamsScreen> {
                                 Row(
                                     children: [
 
+                                      /// image
                                       Container(
                                         margin: EdgeInsets.symmetric(
                                           horizontal: MediaQuery.of(context).size.height * .01,
@@ -141,9 +143,9 @@ class _OxfordHandoutsScreenState extends State<CambridgeMockExamsScreen> {
                                       IconButton(
                                           onPressed:()async{
                                             final courseTitle = 'Cambridge Course';
-                                            final lectureName = cubit.cambridgeCoursesList[index].title;
+                                            final lectureName = cubit.oxfordCoursesList[index].title;
                                             final bookImageUrl = 'https://img.freepik.com/free-photo/english-books-with-red-background_23-2149440458.jpg?w=360&t=st=1703150045~exp=1703150645~hmac=38549c832725cef0920fc52fc2a15442b0f41c825fb24c92f7c44122af614ddd';
-                                            final courseUrl = cubit.cambridgeCoursesList[index].url;
+                                            final courseUrl = cubit.oxfordCoursesList[index].url;
 
                                             final message = '''
 📚 *New Learning Opportunity!*
@@ -175,8 +177,8 @@ Download the app now and explore all our courses:
                                     IconButton(
                                         onPressed: (){
                                           cubit.deleteCambridgeCourses(
+                                            type: 'markedAssignments',
                                             section: 'mockExams',
-                                            type: 'exams',
                                             uId: cubit.cambridgeCoursesList[index].uId,
                                           );
                                         },
@@ -190,7 +192,7 @@ Download the app now and explore all our courses:
                                     IconButton(
                                         onPressed: (){
                                           customPushNavigator(context, EditCambridgeHandouts(
-                                            type: 'exams',
+                                            type: 'markedAssignments',
                                             uId: cubit.cambridgeCoursesList[index].uId,
                                             title: cubit.cambridgeCoursesList[index].title,
                                             url: cubit.cambridgeCoursesList[index].url,

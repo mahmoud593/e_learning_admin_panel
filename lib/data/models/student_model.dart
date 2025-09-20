@@ -12,6 +12,9 @@ class StudentModel {
     required this.session,
     required this.isPayment,
     required this.isVerify,
+    required this.isVerifyCambridge,
+    required this.isVerifyOxford,
+    required this.isVerifyIlets,
     required this.uId,
   });
 
@@ -20,6 +23,9 @@ class StudentModel {
   final String groupId;
   final bool isPayment;
   final bool isVerify;
+   bool isVerifyCambridge;
+   bool isVerifyIlets;
+   bool isVerifyOxford;
   final String parentName;
   final String parentPhone;
   final String school;
@@ -34,6 +40,9 @@ class StudentModel {
     groupId: json["groupId"],
     isPayment: json["isPayment"],
     isVerify: json["isVerify"],
+    isVerifyIlets: json["isVerifyIlets"]?? false,
+    isVerifyOxford: json["isVerifyOxford"]?? false,
+    isVerifyCambridge: json["isVerifyCambridge"]?? false,
     parentName: json["parentName"],
     parentPhone: json["parentPhone"],
     school: json["school"],
@@ -48,6 +57,9 @@ class StudentModel {
     "groupId": groupId,
     "isPayment": isPayment,
     "isVerify": isVerify,
+    "isVerifyIlets": isVerifyIlets,
+    "isVerifyOxford": isVerifyOxford,
+    "isVerifyCambridge": isVerifyCambridge,
     "parentName": parentName,
     "parentPhone": parentPhone,
     "school": school,

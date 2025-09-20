@@ -14,22 +14,22 @@ import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
-class PlacementTestItems extends StatefulWidget {
+class PlacementMarkScreen extends StatefulWidget {
   final String title;
   final String section;
   final String type;
-  const PlacementTestItems({super.key, required this.title, required this.section, required this.type});
+  const PlacementMarkScreen({super.key, required this.title, required this.section, required this.type});
 
   @override
-  State<PlacementTestItems> createState() => _PlacementTestItemsState();
+  State<PlacementMarkScreen> createState() => _PlacementMarkScreenState();
 }
 
-class _PlacementTestItemsState extends State<PlacementTestItems> {
+class _PlacementMarkScreenState extends State<PlacementMarkScreen> {
 
   @override
   void initState() {
     super.initState();
-    AppCubit.get(context).getPlacementTests(courseName: widget.section, type: 'file');
+    AppCubit.get(context).getPlacementTests(courseName: widget.section, type: 'marks');
   }
 
   @override

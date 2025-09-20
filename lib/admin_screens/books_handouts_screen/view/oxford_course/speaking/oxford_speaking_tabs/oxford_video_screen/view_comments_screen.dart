@@ -86,7 +86,7 @@ class _StudentCommentsScreenState extends State<StudentCommentsScreen> {
                 // setState(() {
                 //   comments.removeWhere((c) => c.id == comment.id);
                 // });
-                AppCubit.get(context).deleteOxfordVideoComments(uId: videoId, commentId: comment.uId);
+                AppCubit.get(context).deleteOxfordVideoComments(uId: videoId, commentId: comment.id);
                 Navigator.of(context).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
@@ -212,7 +212,7 @@ class _StudentCommentsScreenState extends State<StudentCommentsScreen> {
                         // setState(() {
                         //   comment = controller.text;
                         // });
-                        AppCubit.get(context).updateOxfordVideoComments(uId:videoId , commentId: comment.uId, comment: controller.text);
+                        AppCubit.get(context).updateOxfordVideoComments(uId:videoId , commentId: comment.id, comment: controller.text);
                         Navigator.pop(context);
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
@@ -359,7 +359,7 @@ class _StudentCommentsScreenState extends State<StudentCommentsScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  comment.name,
+                                  comment.userName,
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16,

@@ -9,6 +9,7 @@
       required this.coursePrice,
       required this.uId,
       required this.courseName,
+      required this.courseTime,
       required this.status,
   });
 
@@ -18,6 +19,7 @@
   final String endTime;
   final String startDate;
   final String courseName;
+  final String courseTime;
   final String startTime;
   final String uId;
   final bool status;
@@ -29,8 +31,9 @@
     endTime: json["endTime"],
     coursePrice: json["coursePrice"],
     startDate: json["startDate"],
-    courseName: json["courseName"],
+    courseName: json["courseName"]??'',
     startTime: json["startTime"],
+    courseTime: json["courseTime"],
     uId: json["uId"],
     status: json["status"],
   );
@@ -42,6 +45,7 @@
     "coursePrice": coursePrice,
     "startDate": startDate,
     "courseName": courseName,
+    "courseTime": courseTime,
     "startTime": startTime,
     "uId": uId,
     "status": status,

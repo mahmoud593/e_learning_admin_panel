@@ -64,7 +64,8 @@ class OxfordUploadTracks extends StatelessWidget {
                         onTap: (){
                           cubit.uploadOxfordCourses(
                               title: controller.text,
-                              section: section
+                              section: section,
+                              type: '',
                           );
                         },
                         child: Container(

@@ -9,8 +9,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 class UploadCambridgeHandouts extends StatelessWidget {
-  UploadCambridgeHandouts({super.key,required this.section});
+  UploadCambridgeHandouts({super.key,required this.section, required this.type});
   final String section;
+  final String type;
 
   TextEditingController controller = TextEditingController();
 
@@ -64,7 +65,8 @@ class UploadCambridgeHandouts extends StatelessWidget {
                         onTap: (){
                           cubit.uploadCambridgeCourses(
                               title: controller.text,
-                              section: section
+                              section: section,
+                              type: type
                           );
                         },
                         child: Container(

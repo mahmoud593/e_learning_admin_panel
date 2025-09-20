@@ -12,9 +12,11 @@ import 'package:e_learning_dathboard/business_logic/app_cubit/app_cubit.dart';
 import 'package:e_learning_dathboard/business_logic/app_cubit/app_states.dart';
 import 'package:e_learning_dathboard/styles/color_manager.dart';
 import 'package:e_learning_dathboard/widgets/navigation.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 class CambridgePdfSpeakerScreen extends StatefulWidget {
   const CambridgePdfSpeakerScreen({super.key});
@@ -71,6 +73,7 @@ class _IeltsHandoutsScreenState extends State<CambridgePdfSpeakerScreen> {
                       return GestureDetector(
                         onTap: (){
                           customPushNavigator(context, OpenPdf(
+                            isImage:cubit.cambridgeCoursesList[index].isImage ,
                             pdfUrl:cubit.cambridgeCoursesList[index].url
                             ,title: cubit.cambridgeCoursesList[index].title,
                           ));
@@ -94,23 +97,31 @@ class _IeltsHandoutsScreenState extends State<CambridgePdfSpeakerScreen> {
                                       /// image
                                       Container(
                                         margin: EdgeInsets.symmetric(
-                                          horizontal: MediaQuery.of(context).size.height*.01,
+                                          horizontal: MediaQuery.of(context).size.height * .01,
                                         ),
                                         clipBehavior: Clip.antiAliasWithSaveLayer,
-                                        height: MediaQuery.of(context).size.height*0.1,
-                                        width: MediaQuery.of(context).size.height*.1,
+                                        height: MediaQuery.of(context).size.height * 0.1,
+                                        width: MediaQuery.of(context).size.height * .1,
                                         decoration: BoxDecoration(
                                           color: ColorManager.white.withOpacity(.9),
                                           borderRadius: BorderRadius.circular(10),
                                         ),
                                         child: CachedNetworkImage(
+                                          imageUrl: cubit.cambridgeCoursesList[index].url,
                                           fit: BoxFit.cover,
-                                          imageUrl: 'https://img.freepik.com/free-photo/english-books-with-red-background_23-2149440458.jpg?w=360&t=st=1703150045~exp=1703150645~hmac=38549c832725cef0920fc52fc2a15442b0f41c825fb24c92f7c44122af614ddd',
-                                          progressIndicatorBuilder:  (context, url,downloadProgress) {
-                                            return const Center(child: CircularProgressIndicator(),);
-                                          },
+                                          placeholder: (context, url) =>
+                                          const Center(child: CupertinoActivityIndicator()),
                                           errorWidget: (context, url, error) {
-                                            return const Image(image: AssetImage('assets/images/bookshelf.png'));
+                                            // حل مشكلة setState() داخل build
+                                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                                              cubit.cambridgeCoursesList[index].isImage = false;
+                                            });
+                                            return SfPdfViewer.network(
+                                              cubit.cambridgeCoursesList[index].url,
+                                              canShowScrollStatus: false,      // يخفي رقم الصفحة
+                                              canShowPaginationDialog: false,  // يمنع نافذة إدخال صفحة
+                                              canShowScrollHead: false,        // يخفي scroll head
+                                            );
                                           },
                                         ),
                                       ),
@@ -134,8 +145,29 @@ class _IeltsHandoutsScreenState extends State<CambridgePdfSpeakerScreen> {
 
                                       IconButton(
                                           onPressed:()async{
-                                            await Share.share(' اطلع هذا الملف : ${cubit.cambridgeCoursesList[index].title} \n ${cubit.cambridgeCoursesList[index].url}');
-                                          } ,
+                                            final courseTitle = 'Cambridge Course';
+                                            final lectureName = cubit.cambridgeCoursesList[index].title;
+                                            final bookImageUrl = 'https://img.freepik.com/free-photo/english-books-with-red-background_23-2149440458.jpg?w=360&t=st=1703150045~exp=1703150645~hmac=38549c832725cef0920fc52fc2a15442b0f41c825fb24c92f7c44122af614ddd';
+                                            final courseUrl = cubit.cambridgeCoursesList[index].url;
+
+                                            final message = '''
+📚 *New Learning Opportunity!*
+Course: $courseTitle
+🎓 Lecture: $lectureName
+
+Discover more about this course:
+$courseUrl
+
+📖 Book cover:
+$bookImageUrl
+
+Download the app now and explore all our courses:
+📱 iOS: https://apps.apple.com/eg/app/english-with-dr-mohamed-ismail/id6740339979  
+🤖 Android: https://play.google.com/store/apps/details?id=com.drismail.drismail
+''';
+
+                                            await Share.share(message);
+                                            } ,
                                           icon: Icon(Icons.share,
                                             color: ColorManager.white,
                                             size: MediaQuery.of(context).size.height*0.03,

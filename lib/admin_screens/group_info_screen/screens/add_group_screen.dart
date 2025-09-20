@@ -19,6 +19,7 @@ class AddGroupScreen extends StatelessWidget {
   TextEditingController coursePriceController = TextEditingController();
   TextEditingController statusController = TextEditingController();
   TextEditingController courseNameController = TextEditingController();
+  TextEditingController courseTimeController = TextEditingController();
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   @override
@@ -38,6 +39,7 @@ class AddGroupScreen extends StatelessWidget {
             courseNameController.text='';
             statusController.text='';
             coursePriceController.text='';
+            courseTimeController.text='';
             AppCubit.get(context).startTimeController.text='';
             AppCubit.get(context).startDateController.text='';
             AppCubit.get(context).endTimeController.text='';
@@ -163,7 +165,7 @@ class AddGroupScreen extends StatelessWidget {
 
                       SizedBox(height: MediaQuery.sizeOf(context).height*0.02,),
 
-                      Text('End Time',style: TextStyle(
+                      Text('End Date',style: TextStyle(
                           color: Colors.black,
                           fontSize: MediaQuery.sizeOf(context).height*0.025
                       ),),
@@ -188,8 +190,6 @@ class AddGroupScreen extends StatelessWidget {
                             textInputType: TextInputType.text
                         ),
                       ),
-
-                      SizedBox(height: MediaQuery.sizeOf(context).height*0.02,),
 
 
 
@@ -226,8 +226,6 @@ class AddGroupScreen extends StatelessWidget {
                       SizedBox(height: MediaQuery.sizeOf(context).height*0.02,),
 
 
-                      SizedBox(height: MediaQuery.sizeOf(context).height*0.02,),
-
                       Text('End Time',style: TextStyle(
                           color: Colors.black,
                           fontSize: MediaQuery.sizeOf(context).height*0.025
@@ -258,6 +256,42 @@ class AddGroupScreen extends StatelessWidget {
 
                       SizedBox(height: MediaQuery.sizeOf(context).height*0.02,),
 
+                      Text('Classes per week',style: TextStyle(
+                          color: Colors.black,
+                          fontSize: MediaQuery.sizeOf(context).height*0.025
+                      ),),
+
+                      SizedBox(height: MediaQuery.sizeOf(context).height*0.01,),
+
+                      Row(
+                        children: [
+                          Expanded(
+                            child: DefaultFormField(
+                              validText: 'Please enter number of classes per week',
+                              hint: 'Enter number of classes per week',
+                              controller: courseTimeController,
+                              textInputType: TextInputType.number,
+                            ),
+                          ),
+                          const SizedBox(width: 8), // مسافة بسيطة بين العنصرين
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[200],
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: const Text(
+                              'Week',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: MediaQuery.sizeOf(context).height*0.02,),
+
                       Row(
                         children: [
                           Text('Status',style: TextStyle(
@@ -286,6 +320,7 @@ class AddGroupScreen extends StatelessWidget {
                              cubit.uploadGroups(
                                payType: payType,
                                section: section,
+                                courseTime: courseTimeController.text,
                                 coursePrice: double.parse(coursePriceController.text),
                                type: type,
                                count: int.parse(countController.text),
