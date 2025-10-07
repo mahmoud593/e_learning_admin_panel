@@ -243,6 +243,7 @@ class _PlacementMarkScreenState extends State<PlacementMarkScreen> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
+
         backgroundColor: ColorManager.white,
         title: const Text("Delete Test"),
         content: Text('Are you sure you want to delete "${cubit.placementTests[index].title}"?'),
